@@ -1,0 +1,47 @@
+version: "3.6"
+services:
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - webapps
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  app:
+    restart: always
+    build:
+      context: ./app
+      target: development
+    networks:
+      - webapps
+    volumes:
+      - ./app/package.json:/home/node/app/package.json
+      - ./app/package-lock.json:/home/node/app/package-lock.json
+      - ./app/webpack.config.js:/home/node/app/webpack.config.js
+      - ./app/.babelrc:/home/node/app/.babelrc
+      - ./app/serve.config.js:/home/node/app/serve.config.js
+      - ./app/src:/home/node/app/src
+      - ./app/index.ejs:/home/node/app/index.ejs
+    depends_on:
+      - nginx
+      - api
+  api:
+    restart: always
+    build:
+      context: ./api
+      target: development
+    networks:
+      - webapps
+    volumes:
+      - ./api/package.json:/home/node/api/package.json
+      - ./api/package-lock.json:/home/node/api/package-lock.json
+      - ./api/app:/home/node/api/app
+      - ./api/index.js:/home/node/api/index.js
+    depends_on:
+      - nginx
+networks:
+  webapps:
+    # All containers on the same named network can talk to one another
+    driver: bridge
