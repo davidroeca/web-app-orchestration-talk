@@ -5,6 +5,7 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+      - "34341:34341"
     networks:
       - webapps
     volumes:
