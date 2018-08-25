@@ -1,0 +1,42 @@
+body {
+  font-family: OrkneyRegular;
+  font-size: 200%;
+}
+
+p {
+  font-size: 125%;
+  font-weight: normal;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+
+h1, h2, h3, h4 {
+  text-align: center;
+  font-weight: normal;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+
+ul, ol {
+  list-style-position: inside;
+}
+
+li {
+  text-align: left;
+  font-size: 125%;
+  font-weight: normal;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+  padding-left: 0.3em;
+  line-height: 1.8em;
+  list-style-type: circle;
+}
+
+@font-face {
+  font-family: OrkneyRegular;
+  src: url('./fonts/orkney/Orkney Regular.woff2') format('woff2');
+}
+
+.step {
+  800px;
+}
