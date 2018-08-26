@@ -7,36 +7,107 @@ class App extends React.Component {
     super(props)
 
     this.state = {
-      message: 'No message',
+      items: [],
+      newItemValue: '',
+      error: null,
     }
   }
 
-  componentDidMount() {
-    this.setState({
-      message: 'Fetching message...',
+  fetchItems = () => {
+    // defined as arrow function to bind `this`
+    fetch('/api/items', {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
     })
-    fetch('/api/hello')
       .then(response => response.json())
       .then(json => {
         const { data } = json
         console.log(json)
         this.setState({
-          message: data,
+          items: data,
+          error: null,
         })
       })
-      .catch(err => {
+      .catch(error => {
         this.setState({
-          message: 'Error fetching message :(',
+          items: [],
+          error,
         })
       })
   }
 
+  updateNewItem = (item) => {
+    this.setState({
+      newItemValue: item,
+    })
+  }
+
+  createNewItems = (items) => {
+    const body = JSON.stringify({items})
+    console.log(body)
+    fetch('/api/items', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body,
+    })
+      .then(response => response.json())
+      .then(json => {
+        const { data } = json
+        console.log(json)
+        const oldData = this.state.data
+        this.setState({
+          items: [...oldData, ...data],
+          error: null,
+        })
+      })
+      .catch(error => {
+        this.setState({
+          items: oldData,
+          error,
+        })
+      })
+  }
+
+  componentDidMount() {
+    this.fetchItems()
+  }
+
   render() {
-    const { message } = this.state
+    const { items, error } = this.state
     return (
       <div>
-        <h1>Message below</h1>
-        <p>{message}</p>
+        <button
+          type='button'
+          onClick={this.fetchItems}
+        >
+          refresh items
+        </button>
+        <h1>Items below</h1>
+        <ol>
+          {items.map((item, index) => (
+            <li key={index}>
+              {item.value}
+            </li>
+          ))}
+        </ol>
+        {error ? <p>{error}</p> : null}
+        <label>
+          Add new item
+          <input
+            value={this.state.newItemValue}
+            onChange={(event) => this.updateNewItem(event.target.value)}
+          />
+        </label>
+        <button
+          type='button'
+          onClick={() => this.createNewItems([{value: this.state.newItemValue}])}
+        >
+          create new item
+        </button>
       </div>
     )
   }

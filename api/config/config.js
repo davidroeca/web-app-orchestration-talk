@@ -1,10 +1,10 @@
-const getEnvVar = (name, optional = false, default = null) => {
+const getEnvVar = (name, optional = false, defaultValue = null) => {
   const val = process.env[name];
   if (!val) {
     if (!optional) {
       throw new Error(`Environment variable "${name}" must be set`);
     } else {
-      return default;
+      return defaultValue;
     }
   }
   return val;
