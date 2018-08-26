@@ -24,8 +24,7 @@ const config = {
       path: publicPath,
     },
     devMiddleware: {
-      publicPath: publicPath,
-      index: publicPath,
+      publicPath,
     },
     add: (app, middleware, options) => {
       const historyOptions = {
