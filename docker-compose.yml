@@ -33,16 +33,47 @@ services:
     build:
       context: ./api
       target: development
+    environment:
+      NODE_ENV: development
+      DB_HOST: api_db
+      DB_NAME: api_db
+      DB_USER: api_user
+      DB_PASSWORD: api_password
     networks:
       - webapps
+      - api_db
     volumes:
+      # Package management
       - ./api/package.json:/home/node/api/package.json
       - ./api/package-lock.json:/home/node/api/package-lock.json
+      # Express app
       - ./api/app:/home/node/api/app
       - ./api/index.js:/home/node/api/index.js
+      # Sequelize files
+      - ./api/config:/home/node/api/config
+      - ./api/migrations:/home/node/api/migrations
+      - ./api/models:/home/node/api/models
+      - ./api/seeders:/home/node/api/seeders
     depends_on:
       - nginx
+      - api_db
+  api_db:
+    restart: always
+    image: postgres:10.5-alpine
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: api_db
+      POSTGRES_USER: api_user
+      POSTGRES_PASSWORD: api_password
+    networks:
+      - api_db
+    volumes:
+      # Mount all database files locally
+      - ./api_db/postgresql/data:/var/lib/postgresql/data
 networks:
   webapps:
     # All containers on the same named network can talk to one another
     driver: bridge
+  api_db:
+    driver: bridge
+    internal: true # remove if you want to interact with database directly
