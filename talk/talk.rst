@@ -3,6 +3,10 @@
 :css: style.css
 :title: React App Orchestration
 
+----
+
+:id: title-slide
+
 Orchestrating React apps and back-ends in a development environment
 ===================================================================
 
@@ -13,6 +17,8 @@ Kepler Group LLC
 ~~~~~~~~~~~~~~~~
 
 ----
+
+:id: goals
 
 Goals of this talk
 ==================
@@ -27,6 +33,8 @@ Goals of this talk
 
 ----
 
+:id: caveat-web
+
 Caveat
 ======
 
@@ -37,6 +45,8 @@ Web-Focused
       take additional work and special-casing based on the targeted platforms
 
 ----
+
+:id: caveat-linux
 
 Caveat
 ======
@@ -50,6 +60,8 @@ Developed on Linux
       translated to tools more suited to your development environment
 
 ----
+
+:id: caveat-cra
 
 Caveat
 ======
@@ -65,6 +77,8 @@ I'm not using Create-React-App
 
 ----
 
+:id: assumption-containers
+
 Assumption
 ==========
 
@@ -76,14 +90,18 @@ You run containers in production or will give them a shot
 
 ----
 
+:id: tooling
+
 Tooling
 =======
 
-* Docker
-* Docker-Compose
-* React
-* Webpack 4
-* Webpack-Serve
+|docker_logo|
+|compose_logo|
+|react_logo|
+|webpack_logo|
+|nginx_logo|
+
+*Note*: These are all open-source tools developed by third parties
 
 .. note::
     * I'm specifically using these tools because they're the simplest to me
@@ -96,6 +114,8 @@ Tooling
 
 ----
 
+:id: typical-app
+
 Typical React App
 =================
 
@@ -105,6 +125,8 @@ Typical React App
     * You want to build a react app that targets one or more back-ends.
 
 ----
+
+:id: challenge-port
 
 Challenge: localhost port listening
 ====================================
@@ -116,6 +138,8 @@ Challenge: localhost port listening
 
 ----
 
+:id: challenge-path
+
 Challenge: url paths differ in production
 =========================================
 
@@ -124,6 +148,8 @@ Challenge: url paths differ in production
     * Conditional logic for resolved paths
 
 ----
+
+:id: proposed-architecture
 
 Proposed Architecture
 =====================
@@ -136,6 +162,8 @@ Proposed Architecture
 
 ----
 
+:id: docker-and-compose
+
 Docker and docker-compose
 =========================
 
@@ -146,6 +174,8 @@ Docker and docker-compose
       those in docker-compose
 
 ----
+
+:id: volumes
 
 Volumes
 =======
@@ -165,6 +195,8 @@ Volumes
 
 ----
 
+:id: reverse-proxy
+
 Reverse Proxy
 =============
 
@@ -178,6 +210,8 @@ What & Why?
 
 ----
 
+:id: nginx
+
 NGINX
 =====
 
@@ -186,6 +220,8 @@ NGINX
     * We make use of variables to allow NGINX to start with some services down
 
 ----
+
+:id: repo-structure
 
 Mono or Submodules?
 ===================
@@ -198,6 +234,8 @@ Mono or Submodules?
 
 ----
 
+:id: git-info
+
 If you have issues or enhancements
 ==================================
 
@@ -208,6 +246,24 @@ https://github.com/davidroeca/web-app-orchestration-talk
 
 ----
 
+:id: questions
+
 Questions
 =========
 
+.. Images
+
+.. |docker_logo| image:: images/dockerlogos/docker_logos_2018/PNG/vertical.png
+    :height: 100px
+
+.. |compose_logo| image:: images/compose_logo.png
+    :height: 100px
+
+.. |nginx_logo| image:: images/nginx_logo.svg
+    :height: 100px
+
+.. |webpack_logo| image:: images/webpack_logo.svg
+    :height: 100px
+
+.. |react_logo| image:: images/react_logo.svg
+    :height: 100px

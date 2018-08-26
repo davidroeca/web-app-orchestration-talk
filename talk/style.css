@@ -3,6 +3,10 @@ body {
   font-size: 200%;
 }
 
+div#tooling p {
+  text-align: center;
+}
+
 p {
   font-size: 125%;
   font-weight: normal;
@@ -31,6 +35,7 @@ li {
   line-height: 1.8em;
   list-style-type: circle;
 }
+
 
 @font-face {
   font-family: OrkneyRegular;
