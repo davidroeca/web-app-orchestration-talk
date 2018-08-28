@@ -11,6 +11,8 @@ ARG USER_HOME
 ARG USER_NAME
 ARG API_HOME
 
+RUN apk add --no-cache yarn
+
 RUN mkdir -p $API_HOME
 COPY . $API_HOME
 
@@ -18,7 +20,7 @@ RUN chown -R $USER_NAME:$USER_NAME $API_HOME
 USER $USER_NAME
 WORKDIR $API_HOME
 
-RUN npm install
+RUN yarn install
 
 ###########################################################
 # Stage: Add additional development dependencies
@@ -33,7 +35,7 @@ RUN apk add --no-cache bash
 
 USER $USER_NAME
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["yarn", "start"]
 
 ###########################################################
 # Stage: Finalize production build
@@ -44,4 +46,4 @@ ARG USER_NAME
 
 USER $USER_NAME
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["yarn", "start"]

@@ -19,7 +19,7 @@ services:
       - webapps
     volumes:
       - ./app/package.json:/home/node/app/package.json
-      - ./app/package-lock.json:/home/node/app/package-lock.json
+      - ./app/yarn.lock:/home/node/app/yarn.lock
       - ./app/webpack.config.js:/home/node/app/webpack.config.js
       - ./app/.babelrc:/home/node/app/.babelrc
       - ./app/serve.config.js:/home/node/app/serve.config.js
@@ -45,7 +45,7 @@ services:
     volumes:
       # Package management
       - ./api/package.json:/home/node/api/package.json
-      - ./api/package-lock.json:/home/node/api/package-lock.json
+      - ./api/yarn.lock:/home/node/api/yarn.lock
       # Express app
       - ./api/app:/home/node/api/app
       - ./api/index.js:/home/node/api/index.js
