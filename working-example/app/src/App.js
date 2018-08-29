@@ -3,14 +3,10 @@ import { hot } from 'react-hot-loader'
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      items: [],
-      newItemValue: '',
-      error: null,
-    }
+  state = {
+    items: [],
+    newItemValue: '',
+    error: null,
   }
 
   fetchItems = () => {

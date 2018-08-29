@@ -3,19 +3,14 @@ import { hot } from 'react-hot-loader'
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      message: null,
-      error: null,
-    }
+  state = {
+    message: null,
+    error: null,
   }
 
   getMessage = () => {
     fetch('http://localhost:3000/api/hello', {
       method: 'get',
-      mode: 'cors',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
@@ -35,7 +30,6 @@ class App extends React.Component {
       })
 
   }
-
 
   componentDidMount() {
     this.getMessage()
