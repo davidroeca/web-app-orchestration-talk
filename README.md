@@ -13,6 +13,11 @@ a usable and flexible development environment, this talk will also highlight
 how to incorporate webpack 4, webpack-serve, and hot module replacement in this
 environment.
 
+### Presentation
+
+The presentation is built with [hovercraft](https://github.com/regebro/hovercraft),
+and relies on [plantuml](http://plantuml.com/) for diagrams.
+
 ### CORS Example
 
 This example is explicitly meant not to work; this directory is imagined as the
