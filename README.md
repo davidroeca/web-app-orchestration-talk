@@ -12,3 +12,65 @@ image to manage local traffic on a single localhost port. In order to maintain
 a usable and flexible development environment, this talk will also highlight
 how to incorporate webpack 4, webpack-serve, and hot module replacement in this
 environment.
+
+### CORS Example
+
+This example is explicitly meant not to work; this directory is imagined as the
+starting point of a front-end and a back-end that currently don't work
+nicely together.
+
+### Working Example
+
+Prerequisites:
+* Install Docker (version at the time of writing was `18.06.1-ce`) 
+* Install docker-compose (version at time of writing was
+  `docker-compose==1.22.0` via pip)
+
+This example has been built and tested on a Linux Mint machine. There may need
+to be additional steps necessary to get the example up and running on Windows
+or Mac.
+
+This should provide a feasible hot-reloaded front-end development environment
+under the `app/` directory.
+
+#### Running the working-example
+
+```bash
+cd working-example
+docker-compose build
+docker-compose up
+```
+
+... in another shell session (you only have to do this the first time you build)
+
+```bash
+cd working-example
+
+# Run a bash session within the api container
+docker-compose exec api bash
+
+# ... while in the container itself
+./node_modules/.bin/sequelize db:migrate
+# ... exit the container & bash session
+```
+
+With the database created, the app should be loadable in the browser at
+`http://localhost/app`. Any changes made to the database should now be
+persisted under `api_db/postgres/local_data`, which means that the containers
+can be created and destroyed at will.
+
+E.g.:
+
+```bash
+# Remove all containers & volumes
+docker-compose rm -v
+# ... say Y
+
+# then create & run the containers again
+docker-compose up
+```
+
+#### Clean up the example
+
+If you want to clean up docker containers/images/volumes in one command, look
+into `docker-compose down --help`.
