@@ -3,6 +3,9 @@
 :css: style.css
 :title: React App Orchestration
 
+.. role:: strike
+    :class: strike
+
 ----
 
 :id: title-slide
@@ -10,54 +13,215 @@
 Orchestrating React apps and back-ends in a development environment
 ===================================================================
 
-David Roeca, Senior Software Engineer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+David Roeca
+~~~~~~~~~~~
+Senior Software Engineer
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Kepler Group LLC
-~~~~~~~~~~~~~~~~
+Kepler Group
+~~~~~~~~~~~~
 
 ----
 
-:id: goals
+:id: story
 
-Goals of this talk
+Real-World Example
 ==================
 
-* Empower you (the developer) to think more about infrastructure
-* This is possible - you'll be able to spot and reproduce bugs more quickly
-
 .. note::
-    * Think a level above the application
-    * This is possible -- running a complete dev environment will help you spot
-      bugs more quickly and with less risk
+    * You have source code for a web api and a web app
+    * You don't want to use a monolithic framework and instead want to
+      modularize source code of each api and app
+    * Rite of passage
 
 ----
 
-:id: caveat-web
+:id: story-api
 
-Caveat
-======
+API
+===
 
-Web-Focused
+|api_hello|
 
 .. note::
-    * Some patterns here can be applied to mobile apps, but it would likely
-      take additional work and special-casing based on the targeted platforms
+    * The API has one route at /api/hello, providing a simple message
 
 ----
 
-:id: caveat-linux
+:id: app-code
 
-Caveat
-======
+App Code
+========
 
-Developed on Linux
+.. code:: javascript
+
+    class App extends React.Component {
+
+      state = {
+        message: null,
+        error: null,
+      }
+
+      fetchHello = () => {
+        fetch('http://localhost:3000/api/hello')
+          // ... handle promise chain and set state
+      }
+
+      componentDidMount() {
+        this.fetchHello()
+      }
+
+      render() {
+        // Display message if retrieved; show error if error
+      }
+
+    }
 
 .. note::
-    * I run Linux natively at home and at work; all of these examples were
-      built and tested on Linux Mint 18 (based on Ubuntu Xenial)
-    * Hopefully the concepts are laid out clearly enough that this can be
-      translated to tools more suited to your development environment
+    * You write a react app that queries the API and displays the result
+
+----
+
+:id: app-error
+
+Running the App
+===============
+
+|app_error|
+
+.. note::
+    * You run the react app to see what happens
+
+----
+
+:id: app-cors
+
+Running the App
+===============
+
+|app_cors|
+
+.. note::
+    * You get this CORS message
+    * "Cross-Origin Request Blocked: The Same Origin Policy disallows reading
+      the remote resource at http://localhost:3000/api/hello. (Reason: CORS
+      header ‘Access-Control-Allow-Origin’ missing)."
+
+----
+
+:id: cors-sad
+
+Man vs CORS
+===========
+
+|sad_man|
+
+----
+
+.. note::
+    * There ought to be a better way here
+
+----
+
+:id: no-cors
+
+:strike:`CORS`
+==============
+
+.. note::
+    * We can do without CORS
+    * No I'm not saying we need a big framework like django or ruby on rails
+
+----
+
+:id: what-if
+
+What if...
+==========
+
+.. note::
+    * What if there were a "middle man"
+    * Something that behaved as though everything were on the same origin
+    * What if everything was "proxied"
+
+----
+
+:id: reverse-proxy
+
+Reverse Proxy
+=============
+
+|reverse_proxy_diagram|
+
+
+.. note::
+    * A proxy server that retrieves resources on behalf of a client
+    * To the browser it's talking to localhost, when in fact its request
+      is being forwarded by the reverse proxy to the docker container running
+      the development server
+
+----
+
+:id: nginx
+
+NGINX
+=====
+
+|nginx_logo|
+
+.. note::
+    * A great, free reverse proxy program that can be easily configured.
+
+----
+
+:id: nginx-config
+
+NGINX Config
+============
+
+.. code:: nginx
+
+    http {
+      server {
+        listen 9000;
+        server_name localhost;
+
+        location /api {
+          # In development, setting a variable to proxy_pass allows nginx to
+          # start with services down
+          set $target "http://localhost:3000";
+          proxy_pass $target;
+        }
+
+        location /app {
+          set $target "http://localhost:8080";
+          proxy_pass $target;
+        }
+      }
+    }
+
+
+.. note::
+    * We make use of variables to allow NGINX to start with some services down
+    * NGINX in this scenario is what the browser will interact with on port
+      9000
+    * NGINX forwards requests for both front-end assets and back-end queries
+      to the respective applications and the browser treats it like one single
+      application
+
+----
+
+:id: might-be-done
+
+You Might Be Done Here
+======================
+
+.. note::
+    * A reverse proxy handles CORS issues, and running one will simplify
+      application logic significantly.
+    * For the remainder of this talk, I'll mention some specific tools that
+      made my life easier, enabling me to work with many front-ends and
+      back-ends
 
 ----
 
@@ -66,7 +230,7 @@ Developed on Linux
 Caveat
 ======
 
-I'm not using Create-React-App
+:strike:`create-react-app`
 
 .. note::
     * Many people love create-react-app, and for good reason
@@ -74,19 +238,6 @@ I'm not using Create-React-App
     * public url support is coming; please contribute!
     * Webpack 4 is simpler and greatly improved compared to previous versions;
       worth learning in any case
-
-----
-
-:id: assumption-containers
-
-Assumption
-==========
-
-You run containers in production or will give them a shot
-
-.. note::
-    * Containers make deployments deterministic and replicable; they also make
-      it easier to set up one's complete development environment
 
 ----
 
@@ -111,54 +262,6 @@ Tooling
         * A way of orchestrating said containers
         * A reverse proxy service
         * A front-end development server
-
-----
-
-:id: typical-app
-
-Typical React App
-=================
-
-.. note::
-
-    * You have one or more back-end service(s) deployed and/or in development.
-    * You want to build a react app that targets one or more back-ends.
-
-----
-
-:id: challenge-port
-
-Challenge: localhost port listening
-====================================
-
-.. note::
-    * I can't run any other apps locally on the same port
-    * CORS
-    * Conditional logic for allowed origins and how to query back-ends
-
-----
-
-:id: challenge-path
-
-Challenge: url paths differ in production
-=========================================
-
-.. note::
-    * Url paths are different
-    * Conditional logic for resolved paths
-
-----
-
-:id: proposed-architecture
-
-Proposed Architecture
-=====================
-
-.. note::
-    * Diagram
-    * Reverse Proxy Container
-    * Back-End Container
-    * Front-End Development Container
 
 ----
 
@@ -195,45 +298,6 @@ Volumes
 
 ----
 
-:id: reverse-proxy
-
-Reverse Proxy
-=============
-
-What & Why?
-
-.. note::
-    * A proxy server that retrieves resources on behalf of a client
-    * To the browser it's talking to localhost, when in fact its request
-      is being forwarded by the reverse proxy to the docker container running
-      the development server
-
-----
-
-:id: nginx
-
-NGINX
-=====
-
-.. note::
-    * A great, free reverse proxy program that can be easily configured.
-    * We make use of variables to allow NGINX to start with some services down
-
-----
-
-:id: repo-structure
-
-Mono or Submodules?
-===================
-
-.. note::
-    * It's really up to you
-    * Lots of experienced engineers reviweing PRs -> mono
-    * Different levels of experience and contained ownership -> submodules
-    * Lock down repo containing submodules and automate the submodule updates
-
-----
-
 :id: git-info
 
 If you have issues or enhancements
@@ -253,17 +317,33 @@ Questions
 
 .. Images
 
-.. |docker_logo| image:: images/dockerlogos/docker_logos_2018/PNG/vertical.png
+.. |app_error| image:: images/app_error.png
+    :height: 500px
+
+.. |app_cors| image:: images/app_cors.png
+    :height: 500px
+
+.. |api_hello| image:: images/api_hello.png
+    :height: 500px
+
+.. https://pixabay.com/en/lonely-man-crying-alone-male-1510265/
+.. |sad_man| image:: images/sad_man.jpg
+    :height: 250px
+
+.. |docker_logo| image:: downloads/images/dockerlogos/docker_logos_2018/PNG/vertical.png
     :height: 100px
 
-.. |compose_logo| image:: images/compose_logo.png
+.. |compose_logo| image:: downloads/images/compose_logo.png
     :height: 100px
 
-.. |nginx_logo| image:: images/nginx_logo.svg
+.. |nginx_logo| image:: downloads/images/nginx_logo.svg
     :height: 100px
 
-.. |webpack_logo| image:: images/webpack_logo.svg
+.. |webpack_logo| image:: downloads/images/webpack_logo.svg
     :height: 100px
 
-.. |react_logo| image:: images/react_logo.svg
+.. |react_logo| image:: downloads/images/react_logo.svg
     :height: 100px
+
+.. |reverse_proxy_diagram| image:: compiled/reverse_proxy.svg
+    :height: 300px
