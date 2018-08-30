@@ -14,10 +14,12 @@ ARG APP_HOME
 RUN apk add --no-cache yarn
 
 RUN mkdir -p $APP_HOME
+
 COPY . $APP_HOME
 
 RUN chown -R $USER_NAME:$USER_NAME $APP_HOME
 USER $USER_NAME
+
 WORKDIR $APP_HOME
 
 RUN yarn install
