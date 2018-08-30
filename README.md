@@ -20,14 +20,14 @@ and relies on [plantuml](http://plantuml.com/) for diagrams.
 
 ### CORS Example
 
-This example is explicitly meant not to work; this directory is imagined as the
-starting point of a front-end and a back-end that currently don't work
-nicely together.
+This example highlights the CORS issues found when working with traditional web
+applications; configuring CORS may be the answer, if multiple origins are the
+intended setup. Alternatively, `create-react-app` has a built-in proxy feature.
 
 ### Working Example
 
 Prerequisites:
-* Install Docker (version at the time of writing was `18.06.1-ce`) 
+* Install Docker (version at the time of writing was `18.06.1-ce`)
 * Install docker-compose (version at time of writing was
   `docker-compose==1.22.0` via pip)
 

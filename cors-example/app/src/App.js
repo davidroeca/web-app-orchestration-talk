@@ -9,7 +9,7 @@ class App extends React.Component {
   }
 
   getMessage = () => {
-    fetch('http://localhost:3000/api/hello', {
+    fetch('http://localhost:5000/api/hello', {
       method: 'get',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
