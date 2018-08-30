@@ -119,30 +119,27 @@ Man vs CORS
 ----
 
 .. note::
+    * Google will tell you a solution for how to install another dependency
+      on the API to handle CORS, and then also enable cors in the fetch API
     * There ought to be a better way here
 
 ----
 
-:id: no-cors
+Main Takeaway From This Talk
+============================
 
-:strike:`CORS`
-==============
-
-.. note::
-    * We can do without CORS
-    * No I'm not saying we need a big framework like django or ruby on rails
-
-----
-
-:id: what-if
-
-What if...
-==========
+* You can run multiple apps and apis at the same time in development
+* :strike:`CORS`
 
 .. note::
-    * What if there were a "middle man"
-    * Something that behaved as though everything were on the same origin
-    * What if everything was "proxied"
+    * Instead of going through the mind-numbing exercise of configuring CORS on
+      the back-end and front-end, I'll highlight what I hope you'll be able
+      to take away from today's talk:
+    * It's possible to run multiple apps and apis at the same time in
+      development, and to do so without having to configure CORS.
+    * This development environment is just missing a key ingredient:
+      - a "middle man"
+      - Something that behaved as though everything were on the same origin
 
 ----
 
@@ -155,10 +152,24 @@ Reverse Proxy
 
 
 .. note::
-    * A proxy server that retrieves resources on behalf of a client
+    * Definition: a proxy server that makes downstream requests to other
+      servers and returns a response on behalf of the other servers
     * To the browser it's talking to localhost, when in fact its request
       is being forwarded by the reverse proxy to the docker container running
       the development server
+
+----
+
+:id: forward-proxy
+
+Disambiguation
+==============
+
+|forward_proxy_diagram|
+
+.. note::
+    * In comparison to a "proxy" or "forward proxy" makes requests to
+      servers on behalf of a client
 
 ----
 
@@ -183,12 +194,12 @@ NGINX Config
 
     http {
       server {
-        listen 9000;
+        listen 80;
         server_name localhost;
 
         location /api {
-          # In development, setting a variable to proxy_pass allows nginx to
-          # start with services down
+          # In development, setting a variable to proxy_pass
+          # allows nginx to start with services down
           set $target "http://localhost:3000";
           proxy_pass $target;
         }
@@ -208,6 +219,200 @@ NGINX Config
     * NGINX forwards requests for both front-end assets and back-end queries
       to the respective applications and the browser treats it like one single
       application
+    * Note that in the current use case, the frontend only handles requests
+      made to `/app`. We need to handle this routing configuration.
+
+----
+
+:id: mount-app
+
+Routing App: publicPath
+=======================
+
+.. code:: javascript
+
+    // webpack.config.js
+    const config {
+      // ...
+      output: {
+        // ...
+        publicPath: '/app/',
+      },
+      // ...
+    };
+    module.exports = config;
+
+.. note::
+    * By default, webpack-dev-server and webpack-serve route requests to /
+    * In order to tell the reverse proxy where to forward requests, it makes
+      sense to mount the app under a specific route
+    * If all tools worked well, this would be all we needed
+
+----
+
+:id: html-template-1
+
+Defining HTML Template
+======================
+
+.. code:: javascript
+
+    // webpack.config.js
+    const HtmlWebpackPlugin = require('html-webpack-plugin');
+    const config {
+      // ...
+      plugins: [
+        // ...
+        new HtmlWebpackPlugin({
+          'index.ejs',
+          'index.html',
+        })
+      ],
+      // ...
+    };
+    module.exports = config;
+
+.. note::
+    * In order to generate a dynamic html template with javascript injected,
+    * html-webpack-plugin is what create-react-app uses under the hood
+
+----
+
+:id: html-template-2
+
+Defining HTML Template
+======================
+
+Example index.ejs
+
+.. code:: html
+
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Example App</title>
+      </head>
+      <body>
+        <div id='root'></div>
+        <!--HtmlWebpackPlugin will inject bundle script
+            path here -->
+      </body>
+    </html>
+
+----
+
+:id: dev-server-1
+
+Configuring Webpack-Serve
+=========================
+
+.. code:: javascript
+
+    // serve.config.js
+    // ...
+    const webpackConfig = require('./webpack.config');
+    const publicPath = webpackConfig.output.publicPath;
+    const config = {
+      host: 0.0.0.0,
+      port: 8080,
+      devMiddleware: {
+        publicPath,
+      },
+      // ...
+    };
+    module.exports = config;
+
+.. note::
+    * host 0.0.0.0 -> basically says try any IP address
+    * port specified here should be consistent with nginx
+
+----
+
+:id: dev-server-2
+
+Configuring Webpack-Serve
+=========================
+
+.. code:: javascript
+
+    // serve.config.js
+    // ...
+    const path = require('path');
+    const history = require('connect-history-api-fallback');
+    const convert = require('koa-connect');
+    const webpackConfig = require('./webpack.config');
+    const publicPath = webpackConfig.output.publicPath;
+    const config = {
+      // ...
+      add: (app, middleware, options) => {
+        const historyOptions = {
+          index: path.join(publicPath, 'index.html'),
+        };
+        app.use(convert(history(historyOptions)));
+      },
+    };
+    module.exports = config;
+
+.. note::
+    * to mount app under another path, we need to add a history api fallback
+
+----
+
+:id: dev-server-3
+
+Configuring Webpack-Serve
+=========================
+
+.. code:: javascript
+
+    // serve.config.js
+    // ...
+    const webpackConfig = require('./webpack.config');
+    const publicPath = webpackConfig.output.publicPath;
+    const config = {
+      // ...
+      hotClient: {
+        port: 34341,
+        host: '0.0.0.0',
+        allEntries: true,
+        autoConfigure: true,
+        reload: false,
+        hmr: true,
+      },
+      // ...
+    };
+    module.exports = config;
+
+.. note::
+    * Configure a port for the hotClient that no other app will use
+    * Same host configuration as the dev server itself
+    * allEntries and autoConfigure add hot module replacement to compiler
+    * Page is set not to reload but hot-module-replace -> useful for react
+      hot component updates
+
+----
+
+:id: nginx-hot
+
+NGINX Config for Hot reload
+===========================
+
+.. code:: nginx
+
+    server {
+      listen 34341;
+
+      # Necessary configurations for the websocket server
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "Upgrade";
+
+      location / {
+        set $target "http://localhost:34341";
+        proxy_pass $target;
+      }
+    }
 
 ----
 
@@ -225,83 +430,154 @@ You Might Be Done Here
 
 ----
 
-:id: caveat-cra
+:id: tying-it-together
 
-Caveat
-======
+Tying it all together
+=====================
 
-:strike:`create-react-app`
+|docker_logo|
+|compose_logo|
+
 
 .. note::
-    * Many people love create-react-app, and for good reason
+    * I will use docker and docker compose to simplify build and runs of each
+      app
+    * Also installs nginx
+    * Handles database installation and management
+
+
+----
+
+:id: compose-file
+
+Compose file
+============
+
+.. code:: yaml
+
+    version: "3.6"
+    services:
+      nginx:
+        restart: always
+        build: ./nginx
+        ports:
+          - "80:80"
+          - "34341:34341"
+        # ...
+      app:
+        restart: always
+        build:
+          context: ./app
+          target: development
+        # ...
+      api:
+        # ...
+
+.. note::
+    * One file that defines how services interact
+    * Relies on docker which simplifies builds
+
+----
+
+:id: updating-nginx-1
+
+Updating NGINX
+==============
+
+.. code:: yaml
+
+    version: "3.6"
+    services:
+      app:
+        # Name is DNS
+      api:
+        # Name is DNS
+
+
+.. code:: nginx
+
+  http {
+
+    # Resolve DNS via the docker dns server
+    resolver 127.0.0.11;
+
+    # ...
+
+  }
+
+
+.. note::
+    * We can leverage docker's internal networking capabilities
+
+----
+
+:id: updating-nginx-2
+
+Updating NGINX
+==============
+
+.. code:: nginx
+
+  http {
+    # ...
+    server {
+    # ...
+      location / {
+        set $target "http://app:34341";
+        proxy_pass $target;
+      }
+    }
+
+    server {
+      # ...
+      location /api {
+        set $target "http://api:3000";
+        proxy_pass $target;
+      }
+
+      location /app {
+        set $target "http://app:8080";
+        proxy_pass $target;
+      }
+    }
+  }
+
+.. note::
+    *
+
+----
+
+:id: demo
+
+Demo
+====
+
+.. note::
+
+    * Open terminal and run app
+
+----
+
+:id: caveat-cra
+
+Caveats
+=======
+
+.. note::
+    * Create-React-App
     * Webpack support and webpack-serve support are coming; please contribute!
     * public url support is coming; please contribute!
     * Webpack 4 is simpler and greatly improved compared to previous versions;
       worth learning in any case
-
-----
-
-:id: tooling
-
-Tooling
-=======
-
-|docker_logo|
-|compose_logo|
-|react_logo|
-|webpack_logo|
-|nginx_logo|
-
-*Note*: These are all open-source tools developed by third parties
-
-.. note::
-    * I'm specifically using these tools because they're the simplest to me
-    * It's likely that you can use different tools to achieve the same result
-    * Needs:
-        * Containers
-        * A way of orchestrating said containers
-        * A reverse proxy service
-        * A front-end development server
-
-----
-
-:id: docker-and-compose
-
-Docker and docker-compose
-=========================
-
-.. note::
-    * Every service should have a Dockerfile describing
-    * Consider using a multi-stage build to split development from production
-    * If you push containers to a private/public registry, consider using
-      those in docker-compose
-
-----
-
-:id: volumes
-
-Volumes
-=======
-
-* Quick Updates
-* Locally retain database files
-
-.. note::
-    * Docker volumes enable two things:
-        * The updating of files without a full re-build of the container; this
-          speeds up the feedback loop
-        * Local database management; you can mount database files on your local
-          file system, which enables you to retain database files after
-          destroying and re-creating a database container
-    * Might be more complex on Mac or Windows
-    * A similar concept exists in tools like Kubernetes
+    * Developed on linux; consider running in a virtual machine; might need
+      alternative tools to the ones I've presented with
 
 ----
 
 :id: git-info
 
-If you have issues or enhancements
-==================================
+The Source Code is Available
+============================
 
 https://github.com/davidroeca/web-app-orchestration-talk
 
@@ -346,4 +622,7 @@ Questions
     :height: 100px
 
 .. |reverse_proxy_diagram| image:: compiled/reverse_proxy.svg
+    :height: 300px
+
+.. |forward_proxy_diagram| image:: compiled/forward_proxy.svg
     :height: 300px

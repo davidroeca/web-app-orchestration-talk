@@ -4,17 +4,11 @@ skinparam backgroundcolor transparent
 
 participant Browser
 boundary ReverseProxy as "Reverse Proxy"
-entity FrontEndDevServer as "Front-End Dev Server"
-entity APIServer as "Back-End API Server"
-
-Browser -> ReverseProxy : Request for front-end assets
-ReverseProxy -> FrontEndDevServer
-FrontEndDevServer -> ReverseProxy
-ReverseProxy -> Browser : Response with front-end assets
+entity HiddenServer as "Hidden Server"
 
 Browser -> ReverseProxy : Request for back-end data
-ReverseProxy -> APIServer
-APIServer -> ReverseProxy
-ReverseProxy -> Browser : Response with back-end data
+ReverseProxy -> HiddenServer : Forward request to hidden server
+HiddenServer -> ReverseProxy : Response with back-end data
+ReverseProxy -> Browser : Proxy response from forwarded request
 
 @enduml

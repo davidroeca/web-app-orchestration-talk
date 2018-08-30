@@ -35,6 +35,9 @@ li {
 /* left-align code blocks */
 div .code {
   text-align: left;
+  background-color: #f3f3f3;
+  border-radius: 0.5em;
+  padding: 1em;
 }
 
 .strike {
@@ -47,5 +50,5 @@ div .code {
 }
 
 .step {
-  800px;
+  width: 1000px;
 }
