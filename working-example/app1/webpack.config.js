@@ -8,7 +8,7 @@ const PATHS = {
   build: path.join(__dirname, 'build'),
 };
 
-const publicPath = '/app/'
+const publicPath = '/app1/'
 
 const config = {
   mode: 'development',
