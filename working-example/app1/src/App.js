@@ -76,6 +76,9 @@ class App extends React.Component {
     const { items, error } = this.state
     return (
       <div>
+        <div>
+          <a href='/app2'>Go to App 2</a>
+        </div>
         <button
           type='button'
           onClick={this.fetchItems}
