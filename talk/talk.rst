@@ -763,7 +763,7 @@ Why do any of this?
 The Source Code is Available
 ============================
 
-https://github.com/davidroeca/web-app-orchestration-talk
+github.com/davidroeca/web-app-orchestration-talk
 
 .. note::
     * Send a PR or issue
