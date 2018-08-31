@@ -21,6 +21,24 @@ Senior Software Engineer
 Kepler Group
 ~~~~~~~~~~~~
 
+.. note::
+    * Introduce self & work
+    * Making apps and back-ends play nicely together
+
+----
+
+:id: throughline
+
+Development Environment as Code
+===============================
+
+.. note::
+    * Why am I here? I'm here to talk about your development environment.
+    * DevOps "Infrastructure as code" comparison
+    * Core mantra: if you can, move it from the README to a config file
+      (hopefully it was at least in the readme...)
+    * You might use different tools, but the mantra should hold
+
 ----
 
 :id: story
@@ -29,10 +47,68 @@ Real-World Example
 ==================
 
 .. note::
-    * You have source code for a web api and a web app
-    * You don't want to use a monolithic framework and instead want to
-      modularize source code of each api and app
-    * Rite of passage
+    * Collaborating with friend working on web api and I'm writing a web app
+    * Wanted to modularize source code of each api and app and run them
+      separately
+
+----
+
+:id: run-api
+
+Run the API
+===========
+
+.. code:: bash
+
+    curl http://localhost:5000/api/hello
+
+.. note::
+    * Friend wrote a NodeJS API in express
+    * I clone the source code and run the API
+    * I make a call
+
+----
+
+:id: broken-api-1
+
+API
+===
+
+|sad_man|
+
+.. note::
+    * You try to start the API
+    * It breaks
+    * After running the API, you scratch your head a ton, looking to solutions
+    * Bring him in to help
+    * Then we spot the bug
+
+----
+
+:id: broken-api-2
+
+API
+===
+
+.. code:: javascript
+
+    router.get('/hello', (req, res) => {
+      res.json({
+        data: 'Hello, world!  '.trimEnd(), // BUG
+      });
+    });
+
+.. note::
+    * Then realize the problem is with the NodeJS version
+    * You switch node versions, and start the API and it works!
+    * I want you to keep this fix in mind as we continue with this talk, as
+      Node versioning may not be the only issue that needs to fixed, which is
+      often easily solved with node version managers such as nodenv, nvm, and n
+    * What if my friend wrote his API in Go, ruby, rust, python, etc?
+    * What if I needed additional system dependencies such as a database
+      system?
+    * I'll get back to this in a bit, but first I want to highlight some other
+      issues.
 
 ----
 
@@ -63,7 +139,7 @@ App Code
       }
 
       fetchHello = () => {
-        fetch('http://localhost:3000/api/hello')
+        fetch('http://localhost:5000/api/hello')
           // ... handle promise chain and set state
       }
 
@@ -78,7 +154,10 @@ App Code
     }
 
 .. note::
-    * You write a react app that queries the API and displays the result
+    * App has some state to store message and errors
+    * Has fetchHello method to fetch state
+    * And when the component mounts, it calls the fetchHello method
+      to display the result
 
 ----
 
@@ -104,7 +183,7 @@ Running the App
 .. note::
     * You get this CORS message
     * "Cross-Origin Request Blocked: The Same Origin Policy disallows reading
-      the remote resource at http://localhost:3000/api/hello. (Reason: CORS
+      the remote resource at http://localhost:5000/api/hello. (Reason: CORS
       header ‘Access-Control-Allow-Origin’ missing)."
 
 ----
@@ -116,8 +195,6 @@ Man vs CORS
 
 |sad_man|
 
-----
-
 .. note::
     * Google will tell you a solution for how to install another dependency
       on the API to handle CORS, and then also enable cors in the fetch API
@@ -125,21 +202,29 @@ Man vs CORS
 
 ----
 
-Main Takeaway From This Talk
-============================
+:id: proxy-idea
 
-* You can run multiple apps and apis at the same time in development
-* :strike:`CORS`
+Proxy?
+======
+
+.. code:: javascript
+
+    // package.json
+    {
+      // ...
+      "proxy": {
+        "/api": {
+          "target": "http://localhost:5000"
+        }
+      },
+      // ...
+    }
 
 .. note::
-    * Instead of going through the mind-numbing exercise of configuring CORS on
-      the back-end and front-end, I'll highlight what I hope you'll be able
-      to take away from today's talk:
-    * It's possible to run multiple apps and apis at the same time in
-      development, and to do so without having to configure CORS.
-    * This development environment is just missing a key ingredient:
-      - a "middle man"
-      - Something that behaved as though everything were on the same origin
+    * Instead of configuring CORS, I'll go over another possibility
+    * create-react-app has a proxy feature that can simplify this
+    * But what's actually going on?
+    * Middle man
 
 ----
 
@@ -149,7 +234,6 @@ Reverse Proxy
 =============
 
 |reverse_proxy_diagram|
-
 
 .. note::
     * Definition: a proxy server that makes downstream requests to other
@@ -200,7 +284,7 @@ NGINX Config
         location /api {
           # In development, setting a variable to proxy_pass
           # allows nginx to start with services down
-          set $target "http://localhost:3000";
+          set $target "http://localhost:5000";
           proxy_pass $target;
         }
 
@@ -214,11 +298,11 @@ NGINX Config
 
 .. note::
     * We make use of variables to allow NGINX to start with some services down
-    * NGINX in this scenario is what the browser will interact with on port
-      9000
+    * NGINX in this scenario is what the browser will interact with on port 80
     * NGINX forwards requests for both front-end assets and back-end queries
       to the respective applications and the browser treats it like one single
       application
+    * Don't get too bogged down in details, source is online
     * Note that in the current use case, the frontend only handles requests
       made to `/app`. We need to handle this routing configuration.
 
@@ -246,59 +330,9 @@ Routing App: publicPath
     * By default, webpack-dev-server and webpack-serve route requests to /
     * In order to tell the reverse proxy where to forward requests, it makes
       sense to mount the app under a specific route
-    * If all tools worked well, this would be all we needed
-
-----
-
-:id: html-template-1
-
-Defining HTML Template
-======================
-
-.. code:: javascript
-
-    // webpack.config.js
-    const HtmlWebpackPlugin = require('html-webpack-plugin');
-    const config {
-      // ...
-      plugins: [
-        // ...
-        new HtmlWebpackPlugin({
-          'index.ejs',
-          'index.html',
-        })
-      ],
-      // ...
-    };
-    module.exports = config;
-
-.. note::
-    * In order to generate a dynamic html template with javascript injected,
-    * html-webpack-plugin is what create-react-app uses under the hood
-
-----
-
-:id: html-template-2
-
-Defining HTML Template
-======================
-
-Example index.ejs
-
-.. code:: html
-
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Example App</title>
-      </head>
-      <body>
-        <div id='root'></div>
-        <!--HtmlWebpackPlugin will inject bundle script
-            path here -->
-      </body>
-    </html>
+    * To do this, we need to specify the publicPath
+    * I'm going over this now because create-react-app doesn't support this
+      out of the box (but they're working on it!)
 
 ----
 
@@ -324,6 +358,9 @@ Configuring Webpack-Serve
     module.exports = config;
 
 .. note::
+    * webpack-serve is the future of webpack's development server
+      implementation, and will be incorporated into cra at some point
+    * This configuration is needed to support alternative `publicPath`s
     * host 0.0.0.0 -> basically says try any IP address
     * port specified here should be consistent with nginx
 
@@ -356,6 +393,9 @@ Configuring Webpack-Serve
 
 .. note::
     * to mount app under another path, we need to add a history api fallback
+    * won't dig into too much detail here, but we need this to handle the
+      alternative index file
+    * again, source is online
 
 ----
 
@@ -390,6 +430,7 @@ Configuring Webpack-Serve
     * allEntries and autoConfigure add hot module replacement to compiler
     * Page is set not to reload but hot-module-replace -> useful for react
       hot component updates
+    * source code is online
 
 ----
 
@@ -414,19 +455,117 @@ NGINX Config for Hot reload
       }
     }
 
+.. note::
+    * Some additional HTTP headers are needed
+    * One annoying thing we need to do is ensure that the port lines up with
+      the hotClient port
+    * Again don't get too bogged in remembering these details, since the source
+      code is online
+
 ----
 
-:id: might-be-done
+:id: package-json
 
-You Might Be Done Here
-======================
+And we're back
+==============
 
 .. note::
-    * A reverse proxy handles CORS issues, and running one will simplify
-      application logic significantly.
-    * For the remainder of this talk, I'll mention some specific tools that
-      made my life easier, enabling me to work with many front-ends and
-      back-ends
+    * We've just introduced a system dependency
+    * One that's complicated
+    * I'm lazy and don't want to have to set it up
+    * a different version of it might break up my set up
+    * Let's think back to my node version conflict issues
+    * Now I want to talk about package.json for a minute
+
+----
+
+:id: npm-install-bad-1
+
+NPM Install
+===========
+
+.. code:: bash
+
+    npm install <package-name>
+
+.. note::
+    * I'm developing a javascript app
+    * Someone wants to install a package locally, so they type the following
+      command
+    * How do I feel?
+
+----
+
+:id: npm-install-bad-2
+
+NPM Install
+===========
+
+.. code:: bash
+
+    npm install <package-name>
+
+|sad_man|
+
+.. note::
+    * When someone runs that command, this is how I feel
+    * What's missing here?
+
+
+----
+
+:id: npm-install-better
+
+NPM Install
+===========
+
+.. code:: bash
+
+    npm install --save <dependency>
+    npm install --save-dev <dev-dependency>
+
+.. note::
+    * We need to make sure the dependencies get added to package.json
+    * Obvious, right? Without taking this step, we can't share our code with
+      anyone else without an annoying README that might get out of date.
+    * Yarn is a nice alternative that writes to package.json by default
+    * But let's pause and go back to the start of this talk.
+    * package.json doesn't solve for node and npm versions -- you'll have to
+      mention this in a README
+    * What if we need a database?
+    * What if we want to run our apps through a reverse proxy on development?
+
+----
+
+:id: docker
+
+Docker
+======
+
+|docker_logo|
+
+.. code:: Dockerfile
+
+    # node has a pre-configured docker environment based on version
+
+    FROM node:10.9.0-alpine as base
+
+    # ...
+
+    # Use system package manager to install yarn
+
+    RUN apk add --no-cache yarn
+
+    # ...
+
+    RUN yarn install
+
+    # ...
+
+.. note::
+    * Not the only solution
+    * Could use something like kubernetes with minikube
+    * Docker to me is the simplest
 
 ----
 
@@ -435,15 +574,17 @@ You Might Be Done Here
 Tying it all together
 =====================
 
-|docker_logo|
 |compose_logo|
 
-
 .. note::
-    * I will use docker and docker compose to simplify build and runs of each
-      app
+    * Docker-compose can reference a number of these Dockerfiles and link
+      them together in a unified way
+    * It supports networking configuration to expose ports between different
+      docker containers
     * Also installs nginx
     * Handles database installation and management
+    * In theory if you have two back-ends that rely on two versions of a specific
+      database system
 
 
 ----
@@ -475,7 +616,7 @@ Compose file
 
 .. note::
     * One file that defines how services interact
-    * Relies on docker which simplifies builds
+    * Think of it like package.json for your system dependencies
 
 ----
 
@@ -531,7 +672,7 @@ Updating NGINX
     server {
       # ...
       location /api {
-        set $target "http://api:3000";
+        set $target "http://api:5000";
         proxy_pass $target;
       }
 
@@ -571,6 +712,25 @@ Caveats
       worth learning in any case
     * Developed on linux; consider running in a virtual machine; might need
       alternative tools to the ones I've presented with
+    * ==> Docker should be supported on mac and windows, so hopefully it still
+      works
+
+----
+
+:id: why
+
+Why do any of this?
+===================
+
+
+.. note::
+    * A reverse proxy will simplify any networking configuration you may need
+      to do while developing apps. Create-react-app has a work-around, but it
+      has its flaws if you want to link from one app to another app
+    * Docker and docker-compose, or really any OS-level abstractions will help
+      pin down system dependencies
+    * Migrating dev environment setup from READMEs to config files will make
+      everyone more happy
 
 ----
 
@@ -589,6 +749,11 @@ https://github.com/davidroeca/web-app-orchestration-talk
 :id: questions
 
 Questions
+=========
+
+----
+
+Thank You
 =========
 
 .. Images

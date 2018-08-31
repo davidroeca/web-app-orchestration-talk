@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/hello', (req, res) => {
   res.json({
-    data: 'Hello, world!',
+    data: 'Hello, world!  '.trimEnd(), // introduce bug for node < 10
   });
 });
 
@@ -29,7 +29,7 @@ const serverConfig = {
 };
 
 const serverCallback = () => {
-  console.log('Listening on port 3000...');
+  console.log('Listening on port 5000...');
 };
 
 server.listen(serverConfig, serverCallback);
