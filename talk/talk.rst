@@ -64,8 +64,8 @@ Run the API
 
 .. note::
     * Friend wrote a NodeJS API in express
-    * I clone the source code and run the API
-    * I make a call
+    * I clone the source code
+    * I start the api and make a request
 
 ----
 
@@ -77,7 +77,6 @@ API
 |sad_man|
 
 .. note::
-    * You try to start the API
     * It breaks
     * After running the API, you scratch your head a ton, looking to solutions
     * Bring him in to help
@@ -257,6 +256,31 @@ Disambiguation
 
 ----
 
+:id: why-useful
+
+Using a Reverse Proxy
+=====================
+
+
+.. code:: text
+
+    localhost/app1 -> React App 1
+    localhost/app2 -> React (or non-react) App 2
+    localhost/api -> Some back-end
+
+.. note::
+    * While the cra proxy config is quite useful, it has some limitations
+    * One easy setup is to mount different apps on different paths
+    * This is useful when thinking about logins, since you can use same-origin
+      credentials
+    * Since I cannot run both apps on the same port locally, this can't really
+      be achieved
+    * A reverse proxy in development can also allow you to run both apps at the
+      same time and have them link to one another, without development-specific
+      logic
+
+----
+
 :id: nginx
 
 NGINX
@@ -360,7 +384,7 @@ Configuring Webpack-Serve
 .. note::
     * webpack-serve is the future of webpack's development server
       implementation, and will be incorporated into cra at some point
-    * This configuration is needed to support alternative `publicPath`s
+    * This configuration is needed to support alternative publicPaths
     * host 0.0.0.0 -> basically says try any IP address
     * port specified here should be consistent with nginx
 
@@ -466,15 +490,15 @@ NGINX Config for Hot reload
 
 :id: package-json
 
-And we're back
-==============
+Wait a second...
+================
 
 .. note::
+    * Let's think back to my node version conflict issues
     * We've just introduced a system dependency
     * One that's complicated
     * I'm lazy and don't want to have to set it up
     * a different version of it might break up my set up
-    * Let's think back to my node version conflict issues
     * Now I want to talk about package.json for a minute
 
 ----
