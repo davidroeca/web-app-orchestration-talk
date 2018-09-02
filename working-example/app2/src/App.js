@@ -45,7 +45,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <a href='/app1'>Go to App 1</a>
+        <div>
+          <a href='/app1'>Go to App 1</a>
+        </div>
         {!error && items && items.length ? (
           <ol>
             {items.map((item, index) => (
