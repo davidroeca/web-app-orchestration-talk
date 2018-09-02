@@ -35,21 +35,64 @@ Development Environment as Code
 .. note::
     * Why am I here? I'm here to talk about your development environment.
     * DevOps "Infrastructure as code" comparison
-    * Core mantra: if you can, move it from the README to a config file
+    * Core mantra: if you can, move it to a config file
+    * This applies to a system dependency you've documented in a README
       (hopefully it was at least in the readme...)
+    * This also applies to application-specific logic (think routing paths and
+      CORS), which I'll get to in a bit
     * You might use different tools, but the mantra should hold
+
+----
+
+:id: demo
+
+Demo
+====
+
+.. note::
+
+    * I'm going to start with a quick demo to show you what I've built
+    * It's a simple setup--two React apps, one bootstrapped with CRA, and one
+      without it, as well as an API that interacts with a local database
+    * Hot module replacement in the non-bootstrapped environment
+    * CRA has limitation where you have to reload
+
+----
+
+:id: neat
+
+Neat
+====
+
+.. note::
+    * So I hope you see that this is a pretty neat development environment
+    * Don't have to deal with different port mappings
+    * Can run multiple apps at the same time, and link them to one another
+    * Can talk to the same database, in theory could talk to multiple APIs
+    * Can set up hot reloading and work with the development server here
+    * But how do I set all of that up?
+    * There's a decent amount going on here, so let's break it down.
 
 ----
 
 :id: story
 
-Real-World Example
-==================
+In the beginning...
+===================
 
 .. note::
-    * Collaborating with friend working on web api and I'm writing a web app
-    * Wanted to modularize source code of each api and app and run them
+    * In the beginning... there was darkness
+    * Ok, we're not going back that far, but we'll go back to the start of the
+      project
+    * Let's say I'm collaborating with my friend
+    * He's working on a web api, he picked NodeJS and Express, but this didn't
+      really matter; he could have picked any HTTP framework in any language
+    * I'm writing a web app
+    * We want to modularize source code of each project and run them
       separately
+    * I clone the source code
+    * Run through his README and install Node 8 and the necessary database
+      requirements on my system
 
 ----
 
@@ -60,12 +103,10 @@ Run the API
 
 .. code:: bash
 
-    curl http://localhost:5000/api/hello
+    curl -X GET http://localhost:5000/api/hello
 
 .. note::
-    * Friend wrote a NodeJS API in express
-    * I clone the source code
-    * I start the api and make a request
+    * I start the api and make the simple request he documented in the README
 
 ----
 
@@ -77,7 +118,7 @@ API
 |sad_man|
 
 .. note::
-    * It breaks
+    * And the API breaks
     * After running the API, you scratch your head a ton, looking to solutions
     * Bring him in to help
     * Then we spot the bug
@@ -709,17 +750,6 @@ Updating NGINX
 
 .. note::
     *
-
-----
-
-:id: demo
-
-Demo
-====
-
-.. note::
-
-    * Open terminal and run app
 
 ----
 
