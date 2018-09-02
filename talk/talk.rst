@@ -23,24 +23,8 @@ Kepler Group
 
 .. note::
     * Introduce self & work
-    * Making apps and back-ends play nicely together
-
-----
-
-:id: throughline
-
-Development Environment as Code
-===============================
-
-.. note::
-    * Why am I here? I'm here to talk about your development environment.
-    * DevOps "Infrastructure as code" comparison
-    * Core mantra: if you can, move it to a config file
-    * This applies to a system dependency you've documented in a README
-      (hopefully it was at least in the readme...)
-    * This also applies to application-specific logic (think routing paths and
-      CORS), which I'll get to in a bit
-    * You might use different tools, but the mantra should hold
+    * So that's the title of my talk
+    * But more importantly, why am I here?
 
 ----
 
@@ -70,8 +54,28 @@ Neat
     * Can run multiple apps at the same time, and link them to one another
     * Can talk to the same database, in theory could talk to multiple APIs
     * Can set up hot reloading and work with the development server here
+
+----
+
+:id: throughline
+
+Development Environment as Code
+===============================
+
+.. note::
     * But how do I set all of that up?
-    * There's a decent amount going on here, so let's break it down.
+    * By the end of this talk, you might be able to start thinking about ways
+      of simplifying your development environment setup; it should be easy to
+      onboard someone
+    * DevOps "Infrastructure as code" comparison
+    * Core philosophy: if possible, move it to a config file
+    * This applies to a system dependency you've documented in a README
+      (hopefully it was at least in the readme...)
+    * This also applies to application-specific logic (think routing paths and
+      CORS), which I'll get to in a bit
+    * You might use different tools, but the approach should be able to remain
+      similar
+    * There's a decent amount going on here, so let's break it down
 
 ----
 
@@ -93,6 +97,7 @@ In the beginning...
     * I clone the source code
     * Run through his README and install Node 8 and the necessary database
       requirements on my system
+    * I feel ready to make my first API request
 
 ----
 
@@ -139,7 +144,8 @@ API
     });
 
 .. note::
-    * Then realize the problem is with the NodeJS version
+    * The bug is happining at the method call to trimEnd
+    * Turns out that trimEnd is only supported in NodeJS 10 and above
     * You switch node versions, and start the API and it works!
     * I want you to keep this fix in mind as we continue with this talk, as
       Node versioning may not be the only issue that needs to fixed, which is
@@ -265,6 +271,7 @@ Proxy?
     * create-react-app has a proxy feature that can simplify this
     * But what's actually going on?
     * Middle man
+    * I think it would be helpful if we define some terms first
 
 ----
 
@@ -392,12 +399,12 @@ Routing App: publicPath
     module.exports = config;
 
 .. note::
-    * By default, webpack-dev-server and webpack-serve route requests to /
-    * In order to tell the reverse proxy where to forward requests, it makes
-      sense to mount the app under a specific route
-    * To do this, we need to specify the publicPath
-    * I'm going over this now because create-react-app doesn't support this
-      out of the box (but they're working on it!)
+    * CRA doesn't support this in the development environment, so we'll have to
+      define this configuration in webpack or cra rewire
+    * They're working on it!
+    * By default, webpack development servers route requests to the root
+    * Since we want the app mounted under the app/ path, we need to configure
+      publicPath
 
 ----
 
@@ -413,7 +420,7 @@ Configuring Webpack-Serve
     const webpackConfig = require('./webpack.config');
     const publicPath = webpackConfig.output.publicPath;
     const config = {
-      host: 0.0.0.0,
+      host: '0.0.0.0',
       port: 8080,
       devMiddleware: {
         publicPath,
@@ -424,10 +431,10 @@ Configuring Webpack-Serve
 
 .. note::
     * webpack-serve is the future of webpack's development server
-      implementation, and will be incorporated into cra at some point
+    * It will be incorporated into cra at some point
     * This configuration is needed to support alternative publicPaths
     * host 0.0.0.0 -> basically says try any IP address
-    * port specified here should be consistent with nginx
+    * port specified here should be consistent with reverse proxy config
 
 ----
 
@@ -440,50 +447,14 @@ Configuring Webpack-Serve
 
     // serve.config.js
     // ...
-    const path = require('path');
-    const history = require('connect-history-api-fallback');
-    const convert = require('koa-connect');
     const webpackConfig = require('./webpack.config');
-    const publicPath = webpackConfig.output.publicPath;
-    const config = {
-      // ...
-      add: (app, middleware, options) => {
-        const historyOptions = {
-          index: path.join(publicPath, 'index.html'),
-        };
-        app.use(convert(history(historyOptions)));
-      },
-    };
-    module.exports = config;
-
-.. note::
-    * to mount app under another path, we need to add a history api fallback
-    * won't dig into too much detail here, but we need this to handle the
-      alternative index file
-    * again, source is online
-
-----
-
-:id: dev-server-3
-
-Configuring Webpack-Serve
-=========================
-
-.. code:: javascript
-
-    // serve.config.js
     // ...
-    const webpackConfig = require('./webpack.config');
-    const publicPath = webpackConfig.output.publicPath;
     const config = {
       // ...
       hotClient: {
         port: 34341,
         host: '0.0.0.0',
-        allEntries: true,
-        autoConfigure: true,
-        reload: false,
-        hmr: true,
+        // ...
       },
       // ...
     };
@@ -492,10 +463,8 @@ Configuring Webpack-Serve
 .. note::
     * Configure a port for the hotClient that no other app will use
     * Same host configuration as the dev server itself
-    * allEntries and autoConfigure add hot module replacement to compiler
-    * Page is set not to reload but hot-module-replace -> useful for react
-      hot component updates
-    * source code is online
+    * More configuration exists, such as historyApiFallback; source code is
+      online
 
 ----
 
