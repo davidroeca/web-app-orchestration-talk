@@ -24,7 +24,7 @@ Kepler Group
 .. note::
     * Introduce self & work
     * So that's the title of my talk
-    * But more importantly, why am I here?
+    * I'm going to start with a quick demo to show you what I've built
 
 ----
 
@@ -34,8 +34,6 @@ Demo
 ====
 
 .. note::
-
-    * I'm going to start with a quick demo to show you what I've built
     * It's a simple setup--two React apps, one bootstrapped with CRA, and one
       without it, as well as an API that interacts with a local database
     * Hot module replacement in the non-bootstrapped environment
@@ -63,22 +61,22 @@ Development Environment as Code
 ===============================
 
 .. note::
-    * While that development is quite cool, and quite useful once set up, it's
+    * While that environment is quite cool, and quite useful once set up, it's
       not the easiest to set up
-    * By the end of this talk, you might be able to start thinking about ways
-      of simplifying your development environment setup; it should be easy to
-      onboard someone
-    * This can also help you achieve a more powerful development environment,
-      such as the one I just showed you
+    * So here's my goal for today:
+    * By the end of this talk, you'll be able to start thinking about ways of
+      simplifying your development environment setup
+    * it should be easy to onboard someone
+    * A simplified setup can lead to a more powerful development environment
     * DevOps "Infrastructure as code" comparison
     * Core philosophy: if possible, move it to a config file
     * This applies to a system dependency you've documented in a README
-      (hopefully it was at least in the readme...)
+      (hopefully was there...)
     * This also applies to application-specific logic (think routing paths and
       CORS), which I'll get to in a bit
     * You might use different tools, but the approach should be able to remain
       similar
-    * There's a decent amount going on here, so let's break it down
+    * This might seem daunting so let's break it down
 
 ----
 
@@ -122,12 +120,18 @@ Run the API
 
 API
 ===
+.. code:: bash
+
+    curl -X GET http://localhost:5000/api/hello
+    500
+
 
 |sad_man|
 
 .. note::
     * And the API breaks
-    * After running the API, you scratch your head a ton, looking to solutions
+    * After running the API, I know something's wrong; it works on his system,
+      but it doesn't work on mine
     * Bring him in to help
     * Then we spot the bug
 
@@ -154,8 +158,11 @@ API
       Node versioning may not be the only issue that needs to fixed, which is
       often easily solved with node version managers such as nodenv, nvm, and n
     * What if my friend wrote his API in Go, ruby, rust, python, etc?
+    * If all we care about is HTTP, then a slew of
+      system requirements could cause problems in my development environment
     * What if I needed additional system dependencies such as a database
       system?
+    * The limit does not exist
     * I'll get back to this in a bit, but first I want to highlight some other
       issues.
 
@@ -289,8 +296,7 @@ Reverse Proxy
     * Definition: a proxy server that makes downstream requests to other
       servers and returns a response on behalf of the other servers
     * To the browser it's talking to localhost, when in fact its request
-      is being forwarded by the reverse proxy to the docker container running
-      the development server
+      is being forwarded by the reverse proxy to the development server
 
 ----
 
@@ -324,8 +330,6 @@ Using a Reverse Proxy
     * One easy setup is to mount different apps on different paths
     * This is useful when thinking about logins, since you can use same-origin
       credentials
-    * Since I cannot run both apps on the same port locally, this can't really
-      be achieved
     * A reverse proxy in development can also allow you to run both apps at the
       same time and have them link to one another, without development-specific
       logic
@@ -507,12 +511,15 @@ Wait a second...
 ================
 
 .. note::
-    * Let's think back to my node version conflict issues
+    * So I kind of just threw a lot at you...
+    * This development environment is a bit complicated!
+    * And let's think back to my node version conflict issues from the start.
     * We've just introduced a system dependency
-    * One that's complicated
-    * I'm lazy and don't want to have to set it up
-    * a different version of it might break up my set up
-    * Now I want to talk about package.json for a minute
+    * A complicated one, at that
+    * Setting up NGINX might throw people for a bit of a snag
+    * And a different version of it might break up my set up
+    * So I swear this next part is relevant, but I want to talk about
+      package.json for a minute
 
 ----
 
@@ -566,7 +573,6 @@ NPM Install
     * Obvious, right? Without taking this step, we can't share our code with
       anyone else without an annoying README that might get out of date.
     * Yarn is a nice alternative that writes to package.json by default
-    * But let's pause and go back to the start of this talk.
     * package.json doesn't solve for node and npm versions -- you'll have to
       mention this in a README
     * What if we need a database?
@@ -601,16 +607,22 @@ Docker
     # ...
 
 .. note::
+    * In order to mitigate system dependency issues, I recommend using a
+      system abstraction layer, such as Docker
+    * Here, node has some pre-configured docker containers that can meet
+      people's needs well
+    * Plenty of people use docker containers in their production environment,
+      but it's equally useful in development
     * Not the only solution
-    * Could use something like kubernetes with minikube
+    * Could use a VM or something like kubernetes with minikube
     * Docker to me is the simplest
 
 ----
 
 :id: tying-it-together
 
-Tying it all together
-=====================
+Tying it all together: docker-compose
+=====================================
 
 |compose_logo|
 
