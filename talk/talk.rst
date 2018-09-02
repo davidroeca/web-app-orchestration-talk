@@ -611,7 +611,8 @@ Docker
 
 .. code:: Dockerfile
 
-    # node has a pre-configured docker environment based on version
+    # node has a pre-configured docker environment based on
+    # node version
 
     FROM node:10.9.0-alpine as base
 

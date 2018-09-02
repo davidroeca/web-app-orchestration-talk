@@ -2,6 +2,8 @@ body {
   font-family: OrkneyRegular;
   text-align: center;
   font-size: 200%;
+  color: #F3F3F3;
+  background-color: #000b23;
 }
 
 p {
@@ -35,7 +37,7 @@ li {
 /* left-align code blocks */
 div .code {
   text-align: left;
-  background-color: #f3f3f3;
+  background-color: #2d2d2d;
   border-radius: 0.5em;
   padding: 1em;
 }

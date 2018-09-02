@@ -1,6 +1,6 @@
 @startuml
 
-skinparam backgroundcolor transparent
+skinparam backgroundColor lightGray
 
 participant Browser
 boundary ReverseProxy as "Reverse Proxy"

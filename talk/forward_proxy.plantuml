@@ -2,7 +2,7 @@
 
 title Forward Proxy
 
-skinparam backgroundcolor transparent
+skinparam backgroundColor lightGray
 
 participant Browser
 boundary ForwardProxy as "Forward Proxy"
