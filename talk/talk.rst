@@ -63,10 +63,13 @@ Development Environment as Code
 ===============================
 
 .. note::
-    * But how do I set all of that up?
+    * While that development is quite cool, and quite useful once set up, it's
+      not the easiest to set up
     * By the end of this talk, you might be able to start thinking about ways
       of simplifying your development environment setup; it should be easy to
       onboard someone
+    * This can also help you achieve a more powerful development environment,
+      such as the one I just showed you
     * DevOps "Infrastructure as code" comparison
     * Core philosophy: if possible, move it to a config file
     * This applies to a system dependency you've documented in a README
