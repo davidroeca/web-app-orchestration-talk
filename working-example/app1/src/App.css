@@ -1,0 +1,11 @@
+.App {
+  text-align: center;
+  padding-top: 2em;
+}
+
+ol, ul {
+  display: inline-block;
+}
+li {
+  text-align: left;
+}

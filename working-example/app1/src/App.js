@@ -1,5 +1,6 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
+import './App.css'
 
 class App extends React.Component {
 
@@ -75,7 +76,7 @@ class App extends React.Component {
   render() {
     const { items, error } = this.state
     return (
-      <div>
+      <div className='App'>
         <div>
           <a href='/app2'>Go to App 2</a>
         </div>
@@ -86,21 +87,25 @@ class App extends React.Component {
           refresh items
         </button>
         <h1>Items below</h1>
-        <ol>
-          {items.map((item, index) => (
-            <li key={index}>
-              {item.value}
-            </li>
-          ))}
-        </ol>
+        <div>
+          <ol>
+            {items.map((item, index) => (
+              <li key={index}>
+                {item.value}
+              </li>
+            ))}
+          </ol>
+        </div>
         {error ? <p>{error}</p> : null}
-        <label>
-          Add new item
+        <div>
+          <label>
+            Add new item{" "}
+          </label>
           <input
             value={this.state.newItemValue}
             onChange={(event) => this.updateNewItem(event.target.value)}
           />
-        </label>
+        </div>
         <button
           type='button'
           onClick={() => this.createNewItems([{value: this.state.newItemValue}])}
