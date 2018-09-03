@@ -26,30 +26,21 @@ intended setup. Alternatively, `create-react-app` has a built-in proxy feature.
 
 ### Working Example
 
-Prerequisites on Linux:
-* Install Docker and docker-compose
+This example has been built and tested on a Linux Mint machine, as well as on
+Mac OSX High Sierra. It's likely that this example should also work on Windows
+with similar Docker and docker-compose versions.
 
-```bash
-docker --version
-18.06.1-ce
-docker-compose --version
-1.22.0
-```
+Prerequisites
+* Install [Docker CE](https://docs.docker.com/install/)
+* On Mac, install Docker for Mac
 
-Prerequisites on MacOS:
-* Install [Docker for
-  Mac](https://docs.docker.com/v17.12/docker-for-mac/install/)  (edge)
-
+On both platforms, these were the tested versions:
 ```
 docker --version
 Docker version 18.06.1-ce, build e68fc7a
 docker-compose --version
 docker-compose version 1.22.0, build f46880f
 ```
-
-This example has been built and tested on a Linux Mint machine, as well as on
-Mac OSX High Sierra. It's likely that this example should also work on Windows
-with similar Docker and docker-compose versions.
 
 This should provide a feasible hot-reloaded front-end development environment
 under the `app/` directory.
