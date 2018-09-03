@@ -32,7 +32,7 @@ with similar Docker and docker-compose versions.
 
 Prerequisites
 * Install [Docker CE](https://docs.docker.com/install/) and compose
-* On Mac, install Docker for Mac, which includes both.
+* On Mac, install Docker for Mac (edge), which includes both.
 
 On both platforms, these were the tested versions:
 ```
