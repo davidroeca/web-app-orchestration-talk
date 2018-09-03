@@ -714,6 +714,7 @@ Updating NGINX
     server {
     # ...
       location / {
+        # previously 'set $target "http://localhost:34341";
         set $target "http://app:34341";
         proxy_pass $target;
       }
@@ -734,7 +735,21 @@ Updating NGINX
   }
 
 .. note::
-    *
+    * So we just need to change localhost to the relevant container DNS
+
+
+----
+
+:id: how-to-run
+
+How to Run
+==========
+
+.. code:: bash
+
+    docker-compose build # build all containers
+    docker-compose up # Run all services at once
+
 
 ----
 
@@ -744,15 +759,12 @@ Caveats
 =======
 
 .. note::
-    * Create-React-App
-    * Webpack support and webpack-serve support are coming; please contribute!
-    * public url support is coming; please contribute!
-    * Webpack 4 is simpler and greatly improved compared to previous versions;
-      worth learning in any case
-    * Developed on linux; consider running in a virtual machine; might need
-      alternative tools to the ones I've presented with
-    * ==> Docker should be supported on mac and windows, so hopefully it still
-      works
+    * CRA Webpack support and webpack-serve support are not here, but coming;
+      please contribute!
+    * public url support is not here but coming; please contribute!
+    * Docker and docker-compose are system dependencies (meta, right?) but
+      with support for all 3 major desktop operating systems, this is pretty
+      close to the best we've got.
 
 ----
 
@@ -766,10 +778,11 @@ Why do any of this?
     * A reverse proxy will simplify any networking configuration you may need
       to do while developing apps. Create-react-app has a work-around, but it
       has its flaws if you want to link from one app to another app
-    * Docker and docker-compose, or really any OS-level abstractions will help
-      pin down system dependencies
-    * Migrating dev environment setup from READMEs to config files will make
-      everyone more happy
+    * It will be easier to on-board someone; OS-level abstractions will help
+      pin down system dependencies and simplify set-up
+    * Your application code will be simpler and won't have as many dev
+      environment-specific logic for things such as CORS; you will have more
+      power to configure your dev environment like you would with production.
 
 ----
 
