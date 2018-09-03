@@ -1,0 +1,11 @@
+version: "3.6"
+services:
+  talk:
+    ports:
+      - "8000:8000"
+    build: .
+    volumes:
+      - .:/home/user/talk
+      - /home/user/talk/downloads/
+      - /home/user/talk/compiled/
+    #command: tail -f requirements.txt

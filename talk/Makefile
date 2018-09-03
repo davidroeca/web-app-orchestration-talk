@@ -13,10 +13,11 @@ compiled/%.svg: %.plantuml | compiled
 	java -jar ~/java/plantuml.jar -tsvg -o compiled $<
 
 compiled:
-	mkdir compiled
+	mkdir -p compiled
 
 downloads/fonts/orkney: downloads/orkney.zip | downloads/fonts
-	unzip -d downloads/fonts/orkney downloads/orkney.zip
+	mkdir -p downloads/fonts/orkney && \
+		unzip -d downloads/fonts/orkney downloads/orkney.zip
 
 downloads/orkney.zip: | downloads
 	curl -o downloads/orkney.zip \
@@ -39,7 +40,8 @@ downloads/images/nginx_logo.svg: | downloads/images
 	https://cdn-1.wp.nginx.com/wp-content/uploads/2018/03/icon-NGINX-OSS.svg
 
 downloads/images/dockerlogos: downloads/dockerlogos.zip | downloads/images
-	unzip -d downloads/images/dockerlogos downloads/dockerlogos.zip
+	mkdir -p downloads/images/dockerlogos && \
+		unzip -d downloads/images/dockerlogos downloads/dockerlogos.zip
 
 downloads/dockerlogos.zip: | downloads
 	curl -o downloads/dockerlogos.zip \
@@ -49,7 +51,7 @@ downloads/fonts:
 	mkdir -p downloads/fonts
 
 downloads:
-	mkdir downloads
+	mkdir -p downloads
 
 downloads/images:
 	mkdir -p downloads/images
