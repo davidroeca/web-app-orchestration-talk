@@ -69,7 +69,8 @@ Development Environment as Code
     * it should be easy to onboard someone
     * A simplified setup can lead to a more powerful development environment
     * DevOps "Infrastructure as code" comparison
-    * Core philosophy: if possible, move it to a config file
+    * Core philosophy: whenever possible, move development setup to a config
+      file
     * This applies to a system dependency you've documented in a README
       (hopefully was there...)
     * This also applies to application-specific logic (think routing paths and
