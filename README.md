@@ -31,8 +31,8 @@ Mac OSX High Sierra. It's likely that this example should also work on Windows
 with similar Docker and docker-compose versions.
 
 Prerequisites
-* Install [Docker CE](https://docs.docker.com/install/)
-* On Mac, install Docker for Mac
+* Install [Docker CE](https://docs.docker.com/install/) and compose
+* On Mac, install Docker for Mac, which includes both.
 
 On both platforms, these were the tested versions:
 ```
