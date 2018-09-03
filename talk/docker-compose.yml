@@ -8,4 +8,3 @@ services:
       - .:/home/user/talk
       - /home/user/talk/downloads/
       - /home/user/talk/compiled/
-    #command: tail -f requirements.txt
