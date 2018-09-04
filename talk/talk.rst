@@ -337,19 +337,6 @@ Reverse Proxy
 
 ----
 
-:id: forward-proxy
-
-Disambiguation
-==============
-
-|forward_proxy_diagram|
-
-.. note::
-    * In comparison to a "proxy" or "forward proxy" makes requests to
-      servers on behalf of a client
-
-----
-
 :id: why-useful
 
 Using a Reverse Proxy
@@ -894,7 +881,4 @@ Thank You
     :height: 100px
 
 .. |reverse_proxy_diagram| image:: compiled/reverse_proxy.svg
-    :height: 300px
-
-.. |forward_proxy_diagram| image:: compiled/forward_proxy.svg
     :height: 300px

@@ -1,7 +1,6 @@
 .PHONY: present
 present: \
 	compiled/reverse_proxy.svg \
-	compiled/forward_proxy.svg \
 	downloads/images/compose_logo.png \
 	downloads/images/nginx_logo.svg \
 	downloads/images/react_logo.svg \
