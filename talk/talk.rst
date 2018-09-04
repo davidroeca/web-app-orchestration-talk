@@ -25,34 +25,58 @@ Kepler Group
 .. note::
     * Introduce self & work
     * So that's the title of my talk
-    * I'm going to start with a quick demo to show you what I've built
+    * I'll start with a show of hands: who here has a passion for writing
+      documentation
+    * <Make comment on show of hands>
+    * I find that documentation often gets out of date, and I prefer to jump
+      right into the source code.
+    * Let me tell you a quick story to show you what I mean.
 
 ----
 
-:id: demo
+:id: story
 
-Demo
-====
-
-.. note::
-    * It's a simple setup--two React apps, one bootstrapped with CRA, and one
-      without it, as well as an API that interacts with a local database
-    * Hot module replacement in the non-bootstrapped environment
-    * CRA has limitation where you have to reload
-
-----
-
-:id: neat
-
-Neat
-====
+Story Time
+==========
 
 .. note::
-    * So I hope you see that this is a pretty neat development environment
-    * Don't have to deal with different port mappings
-    * Can run multiple apps at the same time, and link them to one another
-    * Can talk to the same database, in theory could talk to multiple APIs
-    * Can set up hot reloading and work with the development server here
+    * A few years ago, my company had interest in developing a new web
+      application.
+    * I began developing the front-end, and my coworker began developing the
+      backend
+    * After chatting with people and conducting my own research, I picked React
+      since it seemed like an exciting new library with a lot of potential
+    * My coworker picked Python/Flask to develop the back-end since we were and
+      still are a bit of a Python shop
+    * In order to get up and running with the back-end, there was an extensive
+      README and a couple of system database dependencies to install
+    * The README also pointed the reader to a series of files that needed to be
+      used for bootstrapping the API
+    * As the project moved forward, the requirements piled up.
+    * At the same time, the python version used was a moving target--at one
+      moment, it was python 3.4, and at the next moment there was a new feature
+      used that required updates to 3.5 and later even 3.6
+    * As the README evolved (or didn't, but should have), I needed to follow
+      along to ensure the latest version of the API could run
+    * Additionally, looking back fondly (or not so fondly) at this era, this
+      was back in the days before we had anything remotely close to Create
+      React App. I was on my own with the front-end setup, and had to configure
+      everything webpack, to hot module replacement in the dev server
+    * I had my own extensive README that documented the system dependencies
+      and manual setup process
+    * On top of that, we relied very heavily on our staging environment prior
+      to automating our tests, since we couldn't really trust our development
+      environments much
+    * Obviously, a staging environment still helps to check for any last-minute
+      issues, but shouldn't be the only place you search for bugs
+    * The more people we onboarded, the more we realized that this approach
+      simply does not scale to the number of possible environments,
+      configurations, and project overlaps that might exist
+    * Additionally, as more projects targeted our API, it became cumbersome to
+      set up each development environment in its own unique way
+    * We also had a bunch of application code across the stack that handled
+      if/else on whether the environment was production/development, etc.
+    * We needed better approach
 
 ----
 
@@ -62,43 +86,49 @@ Development Environment as Code
 ===============================
 
 .. note::
-    * While that environment is quite cool, and quite useful once set up, it's
-      not the easiest to set up
-    * So here's my goal for today:
-    * By the end of this talk, you'll be able to start thinking about ways of
-      simplifying your development environment setup
-    * it should be easy to onboard someone
-    * A simplified setup can lead to a more powerful development environment
-    * DevOps "Infrastructure as code" comparison
-    * Core philosophy: whenever possible, move development setup to a config
-      file
-    * This applies to a system dependency you've documented in a README
-      (hopefully was there...)
-    * This also applies to application-specific logic (think routing paths and
-      CORS), which I'll get to in a bit
-    * You might use different tools, but the approach should be able to remain
-      similar
-    * This might seem daunting so let's break it down
+    * Given that experience, among others, this is the philosophy I like to
+      follow, and I'll show you what I mean by that
+    * In the world of DevOps, there is a popular buzzword called
+      "Infrastructure as code"
+    * That idea is basically to write code to manage your production
+      infrastructure, so all changes along with the current setup are stored in
+      version control and more readily evaluated
+    * By the end of this talk, I hope you'll be able to start thinking about
+      ways to apply this philosophy to your development environment setup as
+      well
+    * Why is it useful?
+    * This setup should help make it easier to onboard someone
+    * Instead of combing through a README (honestly, isn't that a funny name? A
+      file that begs to be read), you can set it up with one or two commands.
+    * A two-command setup can actually lead to a more powerful development
+      environment because you can change the grow out the overall setup without
+      changing the developer workflow.
+    * And boiled down to one sentence, the idea is this: whenever possible,
+      move your development setup to a config file
+    * This might seem a bit daunting at first so let's break it down
 
 ----
 
-:id: story
+:id: hypothetical-beginning
 
 In the beginning...
 ===================
 
 .. note::
+    * So let's take a time machine back to when we're first starting a project
+    * We'll encounter a few issues and then I'll go through how you might
+      resolve them
     * In the beginning... there was darkness
     * Ok, we're not going back that far, but we'll go back to the start of the
       project
     * Let's say I'm collaborating with my friend
-    * He's working on a web api, he picked NodeJS and Express, but this didn't
-      really matter; he could have picked any HTTP framework in any language
+    * He's working on a web api, she picked NodeJS and Express, but this didn't
+      really matter; she could have picked any HTTP framework in any language
     * I'm writing a web app
     * We want to modularize source code of each project and run them
       separately
     * I clone the source code
-    * Run through his README and install Node 8 and the necessary database
+    * Run through her README and install Node 8 and the necessary database
       requirements on my system
     * I feel ready to make my first API request
 
@@ -114,7 +144,7 @@ Run the API
     curl -X GET http://localhost:5000/api/hello
 
 .. note::
-    * I start the api and make the simple request he documented in the README
+    * I start the api and make the simple request she documented in the README
 
 ----
 
@@ -132,9 +162,9 @@ API
 
 .. note::
     * And the API breaks
-    * After running the API, I know something's wrong; it works on his system,
+    * After running the API, I know something's wrong; it works on her system,
       but it doesn't work on mine
-    * Bring him in to help
+    * Bring her in to help
     * Then we spot the bug
 
 ----
@@ -159,7 +189,7 @@ API
     * I want you to keep this fix in mind as we continue with this talk, as
       Node versioning may not be the only issue that needs to fixed, which is
       often easily solved with node version managers such as nodenv, nvm, and n
-    * What if my friend wrote his API in Go, ruby, rust, python, etc?
+    * What if my friend wrote her API in Go, ruby, rust, python, etc?
     * If all we care about is HTTP, then a slew of
       system requirements could cause problems in my development environment
     * What if I needed additional system dependencies such as a database
@@ -807,7 +837,22 @@ The Source Code is Available
 github.com/davidroeca/web-app-orchestration-talk
 
 .. note::
+    * I'll show you a demo in a bit - here's where my github repo lives, both
+      for this talk and for the demo
     * Send a PR or issue
+
+----
+
+:id: demo
+
+Demo
+====
+
+.. note::
+    * It's a simple setup--two React apps, one bootstrapped with CRA, and one
+      without it, as well as an API that interacts with a local database
+    * Hot module replacement in the non-bootstrapped environment
+    * CRA has limitation where you have to reload
 
 ----
 
