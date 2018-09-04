@@ -175,7 +175,12 @@ API
 API
 ===
 
-|api_hello|
+.. code:: bash
+
+    curl -X GET http://localhost:5000/api/hello
+    {
+      "data": "Hello, world!"
+    }
 
 .. note::
     * The API has one route at /api/hello, providing a simple message
@@ -822,9 +827,6 @@ Thank You
     :height: 500px
 
 .. |app_cors| image:: images/app_cors.png
-    :height: 500px
-
-.. |api_hello| image:: images/api_hello.png
     :height: 500px
 
 .. https://pixabay.com/en/lonely-man-crying-alone-male-1510265/
