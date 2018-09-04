@@ -14,7 +14,8 @@ Orchestrating React apps and back-ends in a development environment
 ===================================================================
 
 David Roeca
-~~~~~~~~~~~
+-----------
+
 Senior Software Engineer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -354,6 +355,8 @@ NGINX
 NGINX Config
 ============
 
+|nginx_logo|
+
 .. code:: nginx
 
     http {
@@ -393,6 +396,8 @@ NGINX Config
 Routing App: publicPath
 =======================
 
+|webpack_logo|
+
 .. code:: javascript
 
     // webpack.config.js
@@ -420,6 +425,8 @@ Routing App: publicPath
 
 Configuring Webpack-Serve
 =========================
+
+|webpack_logo|
 
 .. code:: javascript
 
@@ -451,6 +458,8 @@ Configuring Webpack-Serve
 Configuring Webpack-Serve
 =========================
 
+|webpack_logo|
+
 .. code:: javascript
 
     // serve.config.js
@@ -480,6 +489,8 @@ Configuring Webpack-Serve
 
 NGINX Config for Hot reload
 ===========================
+
+|nginx_logo|
 
 .. code:: nginx
 
@@ -582,9 +593,6 @@ NPM Install
 ----
 
 :id: docker
-
-Docker
-======
 
 |docker_logo|
 
@@ -762,10 +770,9 @@ Caveats
 .. note::
     * CRA Webpack support and webpack-serve support are not here, but coming;
       please contribute!
-    * public url support is not here but coming; please contribute!
-    * Docker and docker-compose are system dependencies (meta, right?) but
-      with support for all 3 major desktop operating systems, this is pretty
-      close to the best we've got.
+    * CRA public url support is not here but coming; please contribute!
+    * At some level you'll always need a system dependency or two--just try to
+      limit the number to manually set up
 
 ----
 
@@ -825,16 +832,16 @@ Thank You
     :height: 250px
 
 .. |docker_logo| image:: downloads/images/dockerlogos/docker_logos_2018/PNG/vertical.png
-    :height: 100px
+    :height: 200px
 
 .. |compose_logo| image:: downloads/images/compose_logo.png
-    :height: 100px
+    :height: 200px
 
 .. |nginx_logo| image:: downloads/images/nginx_logo.svg
-    :height: 100px
+    :height: 200px
 
 .. |webpack_logo| image:: downloads/images/webpack_logo.svg
-    :height: 100px
+    :height: 200px
 
 .. |react_logo| image:: downloads/images/react_logo.svg
     :height: 100px
