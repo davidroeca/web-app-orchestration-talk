@@ -68,11 +68,6 @@ Did you even check the README?
       used that required updates to 3.5 and later even 3.6
     * As the README evolved (or didn't, but should have), I needed to follow
       along to ensure the latest version of the API could run
-    * Additionally, looking back fondly (or not so fondly) at this era, this
-      was back in the days before we had anything remotely close to Create
-      React App. I was on my own with the front-end setup, and had to configure
-      everything from webpack and babel to hot module replacement in the dev
-      server
 
 ----
 
@@ -81,8 +76,8 @@ Did you even check the README?
 |programmer_two_states|
 
 .. note::
-    * I had my own extensive README that documented the system dependencies
-      and manual setup process
+    * I had my own extensive README that documented the nodejs dependencies
+      setup process, which pointed people to the other README
     * On top of that, we relied very heavily on our staging environment prior
       to automating our tests, since we couldn't really trust our development
       environments much
@@ -109,7 +104,7 @@ Did you even check the README?
 
 ----
 
-:id: throughline-intro
+:id: throughline
 
 Development Environment as Code
 ===============================
@@ -126,29 +121,11 @@ Development Environment as Code
       staging environment of sorts (how many people here have had to deploy
       code to debug something) - this solution can help get around some of
       these issues
-
-----
-
-:id: throughline-the-why
-
-Why?
-====
-
-.. note::
-    * This setup should help make it easier to onboard someone
-    * Instead of combing through a README, set up should be run with one or two
-      commands
-    * (honestly, isn't that a funny name? A file that begs to be read)
-    * A two-command setup can actually lead to a more powerful development
-      environment because you can grow out the overall setup without changing
-      the developer workflow.
-    * The code is self-documenting: you're moving the series of instructions to
-      set up the dev environment from the README to code itself
-    * And boiled down to one sentence, the idea is this: whenever possible,
-      move your development setup to a configuration file
+    * This is typically achieved by moving the setup out of the readme and into
+      configuration files
     * By the end of this talk, I hope you'll be able to start thinking
       about ways of updating your own development environment setup
-    * This might seem a bit daunting at first so let's break it down
+
 
 ----
 
@@ -165,13 +142,16 @@ In the beginning...
 
 :id: beginning-tech
 
+React
+
 |react_logo|
+
 
 |express_logo|
 
 .. note::
+    * I'm writing a web app in React
     * She's working on a web api in Node and Express
-    * I'm writing a web app
     * I clone her code
     * I go through her README and install Node 8 and the necessary database
       requirements on my system
@@ -234,16 +214,7 @@ API
 .. note::
     * The bug is happining at the method call to trimEnd
     * Turns out that trimEnd is only supported in NodeJS 10 and above
-    * You switch node versions, and start the API and it works!
-    * I want you to keep this fix in mind as we continue with this talk, as
-      Node versioning may not be the only issue that needs to fixed, which is
-      often easily solved with node version managers such as nodenv, nvm, and n
-    * What if my friend wrote her API in Go, ruby, rust, python, etc?
-    * If all we care about is HTTP, then a slew of
-      system requirements could cause problems in my development environment
-    * What if I needed additional system dependencies such as a database
-      system?
-    * The limit does not exist
+    * So I switch node versions
 
 ----
 
@@ -260,9 +231,8 @@ API
     }
 
 .. note::
-    * The API has one route at /api/hello, providing a simple message
-    * However, to avoid this issue ever happening again, I propose using a
-      system abstraction layer to get around this issue among others
+    * And it works as expected!
+    * Now I could just move on and write my learnings down in a README...
 
 ----
 
@@ -274,8 +244,7 @@ README Workflow
 |readme_workflow|
 
 .. note::
-    * So let's just go through the workflow that was used to set up this
-      environment.
+    * So let's see what all of us will be interacting with the README
     * Looks like a lot of manual steps!
     * There's a better way of doing things that I'll show you, but let's
       ground the discussion with a mention of package.json
@@ -293,7 +262,8 @@ NPM Install
 
 .. note::
     * I'd say that the diagram I just showed you is kind of like the
-      system-dependency parallel of running following command
+      system-dependency parallel of running this command, and then writing
+      about the javascript libraries in a README file
     * Someone installed a package, but it wasn't written to package.json
     * The main issue here is a missing flag
 
@@ -310,14 +280,9 @@ NPM Install
     npm install --save-dev <dev-dependency>
 
 .. note::
-    * We need to make sure the dependencies get added to package.json
     * Shout out to yarn, for implementing the --save flag by default
-    * This should be something obvious to us, right? Without taking this step,
-      we can't share our code with anyone else without an annoying README that
-      might get out of date.
-    * But yet this README approach is somehow the accepted practice when it
-      comes to system dependencies in a development environment
-    * So how do we replicate package.json for these system dependencies?
+    * It seems obvious that we write these dependencies to a config file.
+    * So why should it be ok to write our system dependencies in the README?
 
 ----
 
@@ -345,20 +310,13 @@ NPM Install
     # ...
 
 .. note::
-    * One solution is something like Docker
-    * Docker is a lightweight virtualization layer that can help to pin down
-      the necessary system dependencies in your app
-    * Here, node has some pre-configured docker containers that can meet
-      people's needs well
-    * Plenty of people use docker containers in their production environment;
-      it's a battle-tested solution.
-    * I argue it's equally useful in development
+    * One solution to this is something like Docker, a slightly more procedural
+      package.json for system dependencies
     * Note: not the only solution
-    * Could use a VM or something like kubernetes with minikube
-    * Docker to me is the simplest
-    * I'm not going to go too deep into dockerfiles here, but just know that by
-      writing one, and by having docker installed, I can pin down the system
-      dependencies in a fashion similar to package.json
+    * Could use a VM or something like kubernetes with minikube; the goal here
+      is to have some lightweight abstraction that can be reliably replicated
+      across systems
+    * Docker to me is the simplest, which is part of why I chose it here
 
 ----
 
@@ -374,8 +332,8 @@ Docker Workflow
     * Now, people can maintain the dockerfile, which is *code* rather than
       documentation used to spin up the development environment
     * A new developer runs one command and is ready to go.
-    * So we placed this API in captivity, and it's running appropriately.
-      Now it's time to run the javascript app
+    * So we placed this API in captivity, and everyone is running Node 10 in
+      docker. Now it's time to run the javascript app
 
 ----
 
@@ -413,7 +371,7 @@ App Code
     * Has fetchHello method to fetch state from the API
     * And when the component mounts, it calls the fetchHello method
       to display the result
-    * API is now running in docker -- my previous headaches were solved! Yeah!
+    * And with the API running in Docker, nothing could go wrong!
 
 ----
 
@@ -425,8 +383,8 @@ Running the App
 |app_error|
 
 .. note::
-    * You run the react app to see what happens
-    * We went through this whole docker exercise and it's still broken
+    * Oh, looks like something's wrong
+    * That's unclear, let's open the browser console
 
 ----
 
@@ -438,11 +396,8 @@ Running the App
 |app_cors|
 
 .. note::
-    * You get this CORS message
-    * "Cross-Origin Request Blocked: The Same Origin Policy disallows reading
-      the remote resource at http://localhost:5000/api/hello. (Reason: CORS
-      header ‘Access-Control-Allow-Origin’ missing)."
-    * Who here has ever come across a CORS error?
+    * Looks like a CORS issue
+    * Who here has ever encountered a CORS issue?
 
 ----
 
@@ -455,10 +410,26 @@ Developer vs CORS
 
 .. note::
     * This is truly a rite of passage for any web developer
-    * Google will tell you a solution for how to install another dependency
-      on the API to handle CORS, and then also enable cors in the fetch API
+    * Google will tell you a slew of solutions and how to change your frontend
+      and backend code.
     * Unless you need to configure CORS in production as well, there's a better
       way here
+
+----
+
+:id: reverse-proxy
+
+Reverse Proxy
+=============
+
+|reverse_proxy_diagram|
+
+.. note::
+    * We can use a reverse proxy
+    * Definition: a proxy server that makes downstream requests to other
+      servers and returns a response on behalf of the other servers
+    * To the browser it's talking to localhost, when in fact its request
+      is being forwarded by the reverse proxy to the development server
 
 ----
 
@@ -481,26 +452,11 @@ Proxy?
     }
 
 .. note::
-    * We can use a reverse proxy
-    * This is configuration that works in create-react-app
-    * It's a partial solution, and it might meet your needs if you have only
-      one react app, but this solution isn't what I'm here to talk about
-
-----
-
-:id: reverse-proxy
-
-Reverse Proxy
-=============
-
-|reverse_proxy_diagram|
-
-.. note::
-    * I want to set my own reverse proxy
-    * Definition: a proxy server that makes downstream requests to other
-      servers and returns a response on behalf of the other servers
-    * To the browser it's talking to localhost, when in fact its request
-      is being forwarded by the reverse proxy to the development server
+    * If you're just developing a single app, this is a partial CORS
+      work-around supported by create-react-app
+    * It's in the documentation, and I recommend checking this feature out
+      if you've never used it. But it's not what I'm here to talk to you about
+      today
 
 ----
 
@@ -518,12 +474,13 @@ Using a Reverse Proxy
 |proxy_component|
 
 .. note::
-    * One example setup is to mount different apps on different paths
+    * Here's a setup you might consider (or be) using
+    * You could mount different apps on different paths of the same origin
     * This is useful when thinking about logins, since you can use same-origin
-      credentials
-    * A reverse proxy in development can also allow you to run both apps at the
-      same time and have them link to one another, without development-specific
-      logic
+      credentials for all APIs and apps
+    * A reverse proxy in development can allow you to run both apps at the
+      same time and have them link to one another, with the same logic you'd
+      use in a production environment
 
 ----
 
@@ -535,7 +492,8 @@ NGINX
 |nginx_logo|
 
 .. note::
-    * A great, free reverse proxy program that can be easily configured.
+    * I'll be using NGINX in my demo today
+    * It's a free reverse proxy application that can be easily configured.
 
 ----
 
@@ -569,7 +527,6 @@ NGINX Config
 
 
 .. note::
-    * We make use of variables to allow NGINX to start with some services down
     * NGINX in this scenario is what the browser will interact with on port 80
     * NGINX forwards requests for both front-end assets and back-end queries
       to the respective applications and the browser treats it like one single
@@ -647,7 +604,6 @@ Compose file
         build: ./nginx
         ports:
           - "80:80"
-          - "34341:34341"
         # ...
       app:
         restart: always
@@ -661,9 +617,10 @@ Compose file
 .. note::
     * One file that defines how services interact
     * Think of it like package.json for your system dependencies
-    * In addition to setting up the reverse proxy, you can also set up and run
-      the database in this file to run the database that the API needs without
-      installing those dependencies globally on your system
+    * In addition to setting up the reverse proxy, you can also set up database
+      dependencies locally, which can run as separate containers.
+    * Similar to NGINX and the Node docker images, most popular database system
+      developeres maintain their own respective docker images for public use
 
 ----
 
@@ -688,7 +645,6 @@ How to Run
 
 Why do any of this?
 ===================
-
 
 .. note::
     * Document less; code more--"Development Environment As Code". The goal
@@ -722,8 +678,6 @@ The Source Code is Available
 github.com/davidroeca/web-app-orchestration-talk
 
 .. note::
-    * I'll show you a demo in a bit - here's where my github repo lives, both
-      for this talk and for the demo
     * Send a PR or issue
 
 ----
@@ -734,18 +688,12 @@ Caveats
 =======
 
 .. note::
-    * CRA Webpack support and webpack-serve support are not here, but coming;
-      please contribute!
-    * CRA public url support is not here but coming; please contribute!
-    * At some level you'll always need a system dependency or two--just try to
-      limit the number to manually set up
-
-----
-
-:id: questions
-
-Questions
-=========
+    * A couple of create-react-app issues still need solving before the
+      hot-reloading setup can be used with this environment
+    * Switching to webpack-serve and supporting public_url on development are
+      the two main issues that need to be resolved
+    * Docker itself is a system dependency (meta); no way to get around that,
+      unfortunately
 
 ----
 
@@ -756,6 +704,13 @@ Thank You
     * Manon
     * 500 Tech
     * Digital Ocean
+
+----
+
+:id: questions
+
+Questions
+=========
 
 .. Images
 
