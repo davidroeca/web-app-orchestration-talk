@@ -28,13 +28,15 @@ Kepler Group
     * I'll start with a show of hands: who here has a passion for writing
       documentation
     * <Make comment on show of hands>
-    * I find that documentation often gets out of date, and I prefer to jump
-      right into the source code.
+    * To me, documentation is sort of a necessary evil, but one that we can
+      minimize with a little bit of effort
+    * It often gets out of date, and because of that I prefer to jump right
+      into the source code.
     * Let me tell you a quick story to show you what I mean.
 
 ----
 
-:id: story
+:id: story-1
 
 Story Time
 ==========
@@ -42,18 +44,26 @@ Story Time
 .. note::
     * A few years ago, my company had interest in developing a new web
       application.
-    * I began developing the front-end, and my coworker began developing the
-      backend
-    * After chatting with people and conducting my own research, I picked React
-      since it seemed like an exciting new library with a lot of potential
-    * My coworker picked Python/Flask to develop the back-end since we're a
-      Python shop
+    * I was assigned to front-end which I would be writing in React, and my
+      coworker was assigned to the backend, which he would be writing in python
     * In order to get up and running with the back-end, there was an extensive
       README and a couple of system dependencies to install
     * The README also pointed the reader to a series of files that needed to be
       used for bootstrapping the API
+
+----
+
+:id: story-2
+
+Did you even check the README?
+==============================
+
+|zoolander_read|
+
+
+.. note::
     * As the project moved forward, the requirements piled up.
-    * At the same time, the python version used was a moving target--at one
+    * At the same time, the python version I needed was a moving target--at one
       moment, it was python 3.4, and at the next moment there was a new feature
       used that required updates to 3.5 and later even 3.6
     * As the README evolved (or didn't, but should have), I needed to follow
@@ -63,6 +73,14 @@ Story Time
       React App. I was on my own with the front-end setup, and had to configure
       everything from webpack and babel to hot module replacement in the dev
       server
+
+----
+
+:id: story-3
+
+|programmer_two_states|
+
+.. note::
     * I had my own extensive README that documented the system dependencies
       and manual setup process
     * On top of that, we relied very heavily on our staging environment prior
@@ -70,6 +88,15 @@ Story Time
       environments much
     * Obviously, a staging environment still helps to check for any last-minute
       issues, but shouldn't be the only place you search for bugs
+
+
+----
+
+:id: story-4
+
+|no_idea|
+
+.. note::
     * The more people we onboarded, the more we realized that this approach
       simply does not scale to the number of possible environments,
       configurations, and project overlaps that might exist
@@ -77,30 +104,41 @@ Story Time
       set up each development environment in its own unique way
     * We also had a bunch of application code across the stack that handled
       if/else on whether the environment was production/development, etc.
-    * We needed better approach
+    * We needed better approach for setting up and managing our development
+      environment
 
 ----
 
-:id: throughline
+:id: throughline-intro
 
 Development Environment as Code
 ===============================
 
 .. note::
-    * Given that experience, among others, this is the philosophy I like to
-      follow, and I'll show you what I mean by that
-    * In the world of DevOps, there is a popular buzzword called
-      "Infrastructure as code"; it's popular for good reason, and has taken off
-      in recent years
-    * The idea is basically to write code to manage your production
-      infrastructure, so all changes along with the current setup are stored in
-      version control, readily evaluated, and easy to fix and update
-    * The words on the screen highlight that this same idea can be applied to
-      the development environment.
-    * Why is this even useful?
+    * Given that experience, among others, here is my outlook on the
+      development environment
+    * its setup should be minimal
+    * That's not to say it can't be complicated; on the contrary, I'll show you
+      a pretty complicated yet powerful setup
+    * If I can boil down a complicated setup to a handful of commands, it will
+      be a lot easier to on-board a new person
+    * Applied on a larger scale, this philosophy can help replicate a local
+      staging environment of sorts (how many people here have had to deploy
+      code to debug something) - this solution can help get around some of
+      these issues
+
+----
+
+:id: throughline-the-why
+
+Why?
+====
+
+.. note::
     * This setup should help make it easier to onboard someone
-    * Instead of combing through a README (honestly, isn't that a funny name? A
-      file that begs to be read), you can set it up with one or two commands.
+    * Instead of combing through a README, set up should be run with one or two
+      commands
+    * (honestly, isn't that a funny name? A file that begs to be read)
     * A two-command setup can actually lead to a more powerful development
       environment because you can grow out the overall setup without changing
       the developer workflow.
@@ -121,17 +159,22 @@ In the beginning...
 
 .. note::
     * So let's imagine we're first starting a project
-    * Let's say I'm collaborating with my friend
-    * She's working on a web api, she picked NodeJS and Express, but this
-      didn't really matter; she could have picked any HTTP framework in any
-      language
+    * Say I'm collaborating with my friend
+
+----
+
+:id: beginning-tech
+
+|react_logo|
+
+|express_logo|
+
+.. note::
+    * She's working on a web api in Node and Express
     * I'm writing a web app
-    * We want to modularize source code of each project and run them
-      separately
-    * I clone her source code
-    * Run through her README and install Node 8 and the necessary database
+    * I clone her code
+    * I go through her README and install Node 8 and the necessary database
       requirements on my system
-    * I feel ready to make my first API request
 
 ----
 
@@ -145,7 +188,8 @@ Run the API
     curl -X GET http://localhost:5000/api/hello
 
 .. note::
-    * I start the api and make the simple request she documented in the README
+    * I run the api and make my first request, awaiting the API's response
+      with anticipation
 
 ----
 
@@ -158,14 +202,9 @@ API
     curl -X GET http://localhost:5000/api/hello
     500
 
-
-|sad_man|
-
 .. note::
     * And the API breaks
-
-
-
+    * Something's wrong, so I tell her
 
 ----
 
@@ -174,10 +213,8 @@ API
 |works_on_my_machine|
 
 .. note::
-    * After running the API, I know something's wrong; it works on her system,
-      but it doesn't work on mine
-    * Bring her in to help
-    * Then we spot the bug
+    * She tells me that it's working fine on her machine
+    * Then we realize the issue
 
 ----
 
@@ -575,10 +612,13 @@ Routing App: publicPath
 
 :id: tying-it-together
 
-Tying it all together: docker-compose
-=====================================
+Tying it all together:
+======================
 
 |compose_logo|
+
+docker-compose
+--------------
 
 .. note::
     * Docker-compose can reference a number of these Dockerfiles and link
@@ -621,38 +661,9 @@ Compose file
 .. note::
     * One file that defines how services interact
     * Think of it like package.json for your system dependencies
-
-----
-
-:id: updating-nginx-1
-
-Updating NGINX
-==============
-
-.. code:: yaml
-
-    version: "3.6"
-    services:
-      app:
-        # Name is DNS
-      api:
-        # Name is DNS
-
-
-.. code:: nginx
-
-  http {
-
-    # Resolve DNS via the docker dns server
-    resolver 127.0.0.11;
-
-    # ...
-
-  }
-
-
-.. note::
-    * We can leverage docker's internal networking capabilities
+    * In addition to setting up the reverse proxy, you can also set up and run
+      the database in this file to run the database that the API needs without
+      installing those dependencies globally on your system
 
 ----
 
@@ -667,19 +678,9 @@ How to Run
     docker-compose up # Run all services at once
 
 
-----
-
-:id: caveat-cra
-
-Caveats
-=======
-
 .. note::
-    * CRA Webpack support and webpack-serve support are not here, but coming;
-      please contribute!
-    * CRA public url support is not here but coming; please contribute!
-    * At some level you'll always need a system dependency or two--just try to
-      limit the number to manually set up
+    * Once we've set up docker-compose, thiss is all we need to run
+
 
 ----
 
@@ -690,14 +691,26 @@ Why do any of this?
 
 
 .. note::
-    * A reverse proxy will simplify any networking configuration you may need
-      to do while developing apps. Create-react-app has a work-around, but it
-      has its flaws if you want to link from one app to another app
-    * It will be easier to on-board someone; OS-level abstractions will help
-      pin down system dependencies and simplify set-up
-    * Your application code will be simpler and won't have as many dev
-      environment-specific logic for things such as CORS; you will have more
-      power to configure your dev environment like you would with production.
+    * Document less; code more--"Development Environment As Code". The goal
+      here is to move it out of the README.
+    * A system abstraction layer such as docker, coupled with docker-compose
+      will help to pin down the system dependencies
+    * Configuring a reverse proxy on development helps to remove unnecessary
+      application logic for configuring CORS on development and will allow you
+      to replicate the set-up you plan to deploy.
+
+----
+
+:id: demo
+
+Demo
+====
+
+.. note::
+    * It's a simple setup--two React apps, one bootstrapped with CRA, and one
+      without it, as well as an API that interacts with a local database
+    * Hot module replacement in the non-bootstrapped environment
+    * CRA has limitation where you have to reload
 
 ----
 
@@ -715,16 +728,17 @@ github.com/davidroeca/web-app-orchestration-talk
 
 ----
 
-:id: demo
+:id: caveat-cra
 
-Demo
-====
+Caveats
+=======
 
 .. note::
-    * It's a simple setup--two React apps, one bootstrapped with CRA, and one
-      without it, as well as an API that interacts with a local database
-    * Hot module replacement in the non-bootstrapped environment
-    * CRA has limitation where you have to reload
+    * CRA Webpack support and webpack-serve support are not here, but coming;
+      please contribute!
+    * CRA public url support is not here but coming; please contribute!
+    * At some level you'll always need a system dependency or two--just try to
+      limit the number to manually set up
 
 ----
 
@@ -738,6 +752,11 @@ Questions
 Thank You
 =========
 
+.. note::
+    * Manon
+    * 500 Tech
+    * Digital Ocean
+
 .. Images
 
 .. |app_error| image:: images/app_error.png
@@ -748,7 +767,6 @@ Thank You
 
 .. |works_on_my_machine| image:: downloads/images/works_on_my_machine.jpg
     :height: 500px
-
 
 .. https://pixabay.com/en/lonely-man-crying-alone-male-1510265/
 .. |sad_man| image:: images/sad_man.jpg
@@ -768,6 +786,18 @@ Thank You
 
 .. |react_logo| image:: downloads/images/react_logo.svg
     :height: 100px
+
+.. |express_logo| image:: downloads/images/express_logo.png
+    :height: 100px
+
+.. |zoolander_read| image:: downloads/images/zoolander_read.jpg
+    :height: 400px
+
+.. |programmer_two_states| image:: downloads/images/programmer_two_states.jpg
+    :height: 400px
+
+.. |no_idea| image:: downloads/images/no_idea.jpg
+    :height: 400px
 
 .. |reverse_proxy_diagram| image:: compiled/reverse_proxy.svg
     :height: 300px

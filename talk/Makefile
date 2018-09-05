@@ -8,7 +8,11 @@ present: \
 	downloads/images/compose_logo.png \
 	downloads/images/nginx_logo.svg \
 	downloads/images/react_logo.svg \
+	downloads/images/express_logo.png \
 	downloads/images/webpack_logo.svg \
+	downloads/images/zoolander_read.jpg \
+	downloads/images/programmer_two_states.jpg \
+	downloads/images/no_idea.jpg \
 	| downloads/fonts/orkney downloads/images/dockerlogos
 	hovercraft -p 0.0.0.0:8000 talk.rst
 
@@ -34,6 +38,7 @@ downloads/images/compose_logo.png: | downloads/images
 	curl -L -o downloads/images/compose_logo.png \
 	https://github.com/docker/compose/raw/master/logo.png
 
+
 downloads/images/webpack_logo.svg: | downloads/images
 	curl -o downloads/images/webpack_logo.svg \
 	https://webpack.js.org/assets/icon-square-big.svg
@@ -42,9 +47,25 @@ downloads/images/react_logo.svg: | downloads/images
 	curl -L -o downloads/images/react_logo.svg \
 	https://raw.githubusercontent.com/facebook/create-react-app/next/packages/react-scripts/template/src/logo.svg
 
+downloads/images/express_logo.png: | downloads/images
+	curl -L -o downloads/images/express_logo.png \
+	https://i.cloudup.com/zfY6lL7eFa-3000x3000.png
+
 downloads/images/nginx_logo.svg: | downloads/images
 	curl -o downloads/images/nginx_logo.svg \
 	https://cdn-1.wp.nginx.com/wp-content/uploads/2018/03/icon-NGINX-OSS.svg
+
+downloads/images/zoolander_read.jpg: | downloads/images
+	curl -L -o downloads/images/zoolander_read.jpg \
+	https://media.makeameme.org/created/how-can-the.jpg
+
+downloads/images/programmer_two_states.jpg: | downloads/images
+	curl -L -o downloads/images/programmer_two_states.jpg \
+	https://digitalsynopsis.com/wp-content/uploads/2015/03/web-designer-developer-jokes-humour-funny-41.jpg
+
+downloads/images/no_idea.jpg: | downloads/images
+	curl -L -o downloads/images/no_idea.jpg \
+	https://i.kym-cdn.com/photos/images/original/000/234/739/fa5.jpg
 
 downloads/images/dockerlogos: downloads/dockerlogos.zip | downloads/images
 	mkdir -p downloads/images/dockerlogos && \
