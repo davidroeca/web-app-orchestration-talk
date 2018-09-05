@@ -31,8 +31,8 @@ Kepler Group
     * To me, documentation is sort of a necessary evil, but one that we can
       minimize with a little bit of effort
     * It often gets out of date, and because of that I prefer to jump right
-      into the source code.
-    * Let me tell you a quick story to show you what I mean.
+      into the source code
+    * Let me tell you a quick story to show you what I mean
 
 ----
 
@@ -43,7 +43,7 @@ Story Time
 
 .. note::
     * A few years ago, my company had interest in developing a new web
-      application.
+      application
     * I was assigned to front-end which I would be writing in React, and my
       coworker was assigned to the backend, which he would be writing in python
     * In order to get up and running with the back-end, there was an extensive
@@ -62,7 +62,7 @@ Did you even check the README?
 
 
 .. note::
-    * As the project moved forward, the requirements piled up.
+    * As the project moved forward, the requirements piled up
     * At the same time, the python version I needed was a moving target--at one
       moment, it was python 3.4, and at the next moment there was a new feature
       used that required updates to 3.5 and later even 3.6
@@ -667,6 +667,12 @@ Demo
       without it, as well as an API that interacts with a local database
     * Hot module replacement in the non-bootstrapped environment
     * CRA has limitation where you have to reload
+    * A couple of create-react-app issues still need solving before the
+      hot-reloading setup can be used with this environment
+    * Switching to webpack-serve and supporting public_url on development are
+      the two main issues that need to be resolved
+    * Docker itself is a system dependency (meta); no way to get around that,
+      unfortunately
 
 ----
 
@@ -679,21 +685,6 @@ github.com/davidroeca/web-app-orchestration-talk
 
 .. note::
     * Send a PR or issue
-
-----
-
-:id: caveat-cra
-
-Caveats
-=======
-
-.. note::
-    * A couple of create-react-app issues still need solving before the
-      hot-reloading setup can be used with this environment
-    * Switching to webpack-serve and supporting public_url on development are
-      the two main issues that need to be resolved
-    * Docker itself is a system dependency (meta); no way to get around that,
-      unfortunately
 
 ----
 
