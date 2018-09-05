@@ -1,0 +1,38 @@
+@startuml
+
+/'left to right direction'/
+
+skinparam backgroundColor lightGray
+
+component Browser
+
+
+cloud "Private Network" {
+
+  frame "Reverse Proxy" as RevProxy
+
+  node API
+
+  node "App 1 Dev Server" as DevServer1
+
+  node "App 2 Dev Server" as DevServer2
+
+  database "API Database" as API_DB
+}
+
+Browser <-right- RevProxy
+Browser -right-> RevProxy
+
+RevProxy <-- API
+RevProxy --> API
+
+API --> API_DB
+API_DB --> API
+
+RevProxy <-- DevServer1
+RevProxy --> DevServer1
+
+RevProxy <-- DevServer2
+RevProxy --> DevServer2
+
+@enduml

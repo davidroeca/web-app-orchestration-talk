@@ -45,14 +45,13 @@ RUN curl -L \
       http://sourceforge.net/projects/plantuml/files/plantuml.1.2018.10.jar/download \
       -o $PATH_PLANTUML
 
-RUN addgroup -S $USER_NAME && adduser -S -G $USER_NAME $USER_NAME
+RUN addgroup -S $USER_NAME && adduser -u 1000 -SH -G $USER_NAME $USER_NAME
+
+COPY . $PROJECT_HOME
 
 RUN chown -R $USER_NAME:$USER_NAME $USER_HOME
 
 USER $USER_NAME
-
-COPY . $PROJECT_HOME
-
 WORKDIR $PROJECT_HOME
 
 EXPOSE 8000

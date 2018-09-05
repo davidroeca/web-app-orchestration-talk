@@ -46,10 +46,10 @@ Story Time
       backend
     * After chatting with people and conducting my own research, I picked React
       since it seemed like an exciting new library with a lot of potential
-    * My coworker picked Python/Flask to develop the back-end since we were and
-      still are a bit of a Python shop
+    * My coworker picked Python/Flask to develop the back-end since we're a
+      Python shop
     * In order to get up and running with the back-end, there was an extensive
-      README and a couple of system database dependencies to install
+      README and a couple of system dependencies to install
     * The README also pointed the reader to a series of files that needed to be
       used for bootstrapping the API
     * As the project moved forward, the requirements piled up.
@@ -61,7 +61,8 @@ Story Time
     * Additionally, looking back fondly (or not so fondly) at this era, this
       was back in the days before we had anything remotely close to Create
       React App. I was on my own with the front-end setup, and had to configure
-      everything webpack, to hot module replacement in the dev server
+      everything from webpack and babel to hot module replacement in the dev
+      server
     * I had my own extensive README that documented the system dependencies
       and manual setup process
     * On top of that, we relied very heavily on our staging environment prior
@@ -89,22 +90,26 @@ Development Environment as Code
     * Given that experience, among others, this is the philosophy I like to
       follow, and I'll show you what I mean by that
     * In the world of DevOps, there is a popular buzzword called
-      "Infrastructure as code"
-    * That idea is basically to write code to manage your production
+      "Infrastructure as code"; it's popular for good reason, and has taken off
+      in recent years
+    * The idea is basically to write code to manage your production
       infrastructure, so all changes along with the current setup are stored in
-      version control and more readily evaluated
-    * By the end of this talk, I hope you'll be able to start thinking about
-      ways to apply this philosophy to your development environment setup as
-      well
-    * Why is it useful?
+      version control, readily evaluated, and easy to fix and update
+    * The words on the screen highlight that this same idea can be applied to
+      the development environment.
+    * Why is this even useful?
     * This setup should help make it easier to onboard someone
     * Instead of combing through a README (honestly, isn't that a funny name? A
       file that begs to be read), you can set it up with one or two commands.
     * A two-command setup can actually lead to a more powerful development
-      environment because you can change the grow out the overall setup without
-      changing the developer workflow.
+      environment because you can grow out the overall setup without changing
+      the developer workflow.
+    * The code is self-documenting: you're moving the series of instructions to
+      set up the dev environment from the README to code itself
     * And boiled down to one sentence, the idea is this: whenever possible,
-      move your development setup to a config file
+      move your development setup to a configuration file
+    * By the end of this talk, I hope you'll be able to start thinking
+      about ways of updating your own development environment setup
     * This might seem a bit daunting at first so let's break it down
 
 ----
@@ -115,19 +120,15 @@ In the beginning...
 ===================
 
 .. note::
-    * So let's take a time machine back to when we're first starting a project
-    * We'll encounter a few issues and then I'll go through how you might
-      resolve them
-    * In the beginning... there was darkness
-    * Ok, we're not going back that far, but we'll go back to the start of the
-      project
+    * So let's imagine we're first starting a project
     * Let's say I'm collaborating with my friend
-    * He's working on a web api, she picked NodeJS and Express, but this didn't
-      really matter; she could have picked any HTTP framework in any language
+    * She's working on a web api, she picked NodeJS and Express, but this
+      didn't really matter; she could have picked any HTTP framework in any
+      language
     * I'm writing a web app
     * We want to modularize source code of each project and run them
       separately
-    * I clone the source code
+    * I clone her source code
     * Run through her README and install Node 8 and the necessary database
       requirements on my system
     * I feel ready to make my first API request
@@ -162,6 +163,17 @@ API
 
 .. note::
     * And the API breaks
+
+
+
+
+----
+
+:id: works-on-my-machine
+
+|works_on_my_machine|
+
+.. note::
     * After running the API, I know something's wrong; it works on her system,
       but it doesn't work on mine
     * Bring her in to help
@@ -195,12 +207,10 @@ API
     * What if I needed additional system dependencies such as a database
       system?
     * The limit does not exist
-    * I'll get back to this in a bit, but first I want to highlight some other
-      issues.
 
 ----
 
-:id: story-api
+:id: fixed-api
 
 API
 ===
@@ -214,6 +224,121 @@ API
 
 .. note::
     * The API has one route at /api/hello, providing a simple message
+    * However, to avoid this issue ever happening again, I propose using a
+      system abstraction layer to get around this issue among others
+
+----
+
+:id: readme-workflow
+
+README Workflow
+===============
+
+|readme_workflow|
+
+.. note::
+    * So let's just go through the workflow that was used to set up this
+      environment.
+    * Looks like a lot of manual steps!
+    * There's a better way of doing things that I'll show you, but let's
+      ground the discussion with a mention of package.json
+
+----
+
+:id: npm-install-bad-1
+
+NPM Install
+===========
+
+.. code:: bash
+
+    npm install <package-name>
+
+.. note::
+    * I'd say that the diagram I just showed you is kind of like the
+      system-dependency parallel of running following command
+    * Someone installed a package, but it wasn't written to package.json
+    * The main issue here is a missing flag
+
+----
+
+:id: npm-install-better
+
+NPM Install
+===========
+
+.. code:: bash
+
+    npm install --save <dependency>
+    npm install --save-dev <dev-dependency>
+
+.. note::
+    * We need to make sure the dependencies get added to package.json
+    * Shout out to yarn, for implementing the --save flag by default
+    * This should be something obvious to us, right? Without taking this step,
+      we can't share our code with anyone else without an annoying README that
+      might get out of date.
+    * But yet this README approach is somehow the accepted practice when it
+      comes to system dependencies in a development environment
+    * So how do we replicate package.json for these system dependencies?
+
+----
+
+:id: docker
+
+|docker_logo|
+
+.. code:: Dockerfile
+
+    # node has a pre-configured docker environment based on
+    # node version
+
+    FROM node:10.9.0-alpine as base
+
+    # ...
+
+    # Use system package manager to install yarn
+
+    RUN apk add --no-cache yarn
+
+    # ...
+
+    RUN yarn install
+
+    # ...
+
+.. note::
+    * One solution is something like Docker
+    * Docker is a lightweight virtualization layer that can help to pin down
+      the necessary system dependencies in your app
+    * Here, node has some pre-configured docker containers that can meet
+      people's needs well
+    * Plenty of people use docker containers in their production environment;
+      it's a battle-tested solution.
+    * I argue it's equally useful in development
+    * Note: not the only solution
+    * Could use a VM or something like kubernetes with minikube
+    * Docker to me is the simplest
+    * I'm not going to go too deep into dockerfiles here, but just know that by
+      writing one, and by having docker installed, I can pin down the system
+      dependencies in a fashion similar to package.json
+
+----
+
+:id: docker-workflow
+
+Docker Workflow
+===============
+
+|docker_workflow|
+
+.. note::
+    * This is the modified diagram of the new workflow
+    * Now, people can maintain the dockerfile, which is *code* rather than
+      documentation used to spin up the development environment
+    * A new developer runs one command and is ready to go.
+    * So we placed this API in captivity, and it's running appropriately.
+      Now it's time to run the javascript app
 
 ----
 
@@ -248,9 +373,10 @@ App Code
 
 .. note::
     * App has some state to store message and errors
-    * Has fetchHello method to fetch state
+    * Has fetchHello method to fetch state from the API
     * And when the component mounts, it calls the fetchHello method
       to display the result
+    * API is now running in docker -- my previous headaches were solved! Yeah!
 
 ----
 
@@ -263,6 +389,7 @@ Running the App
 
 .. note::
     * You run the react app to see what happens
+    * We went through this whole docker exercise and it's still broken
 
 ----
 
@@ -278,20 +405,23 @@ Running the App
     * "Cross-Origin Request Blocked: The Same Origin Policy disallows reading
       the remote resource at http://localhost:5000/api/hello. (Reason: CORS
       header ‘Access-Control-Allow-Origin’ missing)."
+    * Who here has ever come across a CORS error?
 
 ----
 
 :id: cors-sad
 
-Man vs CORS
-===========
+Developer vs CORS
+=================
 
 |sad_man|
 
 .. note::
+    * This is truly a rite of passage for any web developer
     * Google will tell you a solution for how to install another dependency
       on the API to handle CORS, and then also enable cors in the fetch API
-    * There ought to be a better way here
+    * Unless you need to configure CORS in production as well, there's a better
+      way here
 
 ----
 
@@ -314,11 +444,10 @@ Proxy?
     }
 
 .. note::
-    * Instead of configuring CORS, I'll go over another possibility
-    * create-react-app has a proxy feature that can simplify this
-    * But what's actually going on?
-    * Middle man
-    * I think it would be helpful if we define some terms first
+    * We can use a reverse proxy
+    * This is configuration that works in create-react-app
+    * It's a partial solution, and it might meet your needs if you have only
+      one react app, but this solution isn't what I'm here to talk about
 
 ----
 
@@ -330,6 +459,7 @@ Reverse Proxy
 |reverse_proxy_diagram|
 
 .. note::
+    * I want to set my own reverse proxy
     * Definition: a proxy server that makes downstream requests to other
       servers and returns a response on behalf of the other servers
     * To the browser it's talking to localhost, when in fact its request
@@ -342,16 +472,16 @@ Reverse Proxy
 Using a Reverse Proxy
 =====================
 
-
 .. code:: text
 
     localhost/app1 -> React App 1
     localhost/app2 -> React (or non-react) App 2
     localhost/api -> Some back-end
 
+|proxy_component|
+
 .. note::
-    * While the cra proxy config is quite useful, it has some limitations
-    * One easy setup is to mount different apps on different paths
+    * One example setup is to mount different apps on different paths
     * This is useful when thinking about logins, since you can use same-origin
       credentials
     * A reverse proxy in development can also allow you to run both apps at the
@@ -443,213 +573,6 @@ Routing App: publicPath
 
 ----
 
-:id: dev-server-1
-
-Configuring Webpack-Serve
-=========================
-
-|webpack_logo|
-
-.. code:: javascript
-
-    // serve.config.js
-    // ...
-    const webpackConfig = require('./webpack.config');
-    const publicPath = webpackConfig.output.publicPath;
-    const config = {
-      host: '0.0.0.0',
-      port: 8080,
-      devMiddleware: {
-        publicPath,
-      },
-      // ...
-    };
-    module.exports = config;
-
-.. note::
-    * webpack-serve is the future of webpack's development server
-    * It will be incorporated into cra at some point
-    * This configuration is needed to support alternative publicPaths
-    * host 0.0.0.0 -> basically says try any IP address
-    * port specified here should be consistent with reverse proxy config
-
-----
-
-:id: dev-server-2
-
-Configuring Webpack-Serve
-=========================
-
-|webpack_logo|
-
-.. code:: javascript
-
-    // serve.config.js
-    // ...
-    const webpackConfig = require('./webpack.config');
-    // ...
-    const config = {
-      // ...
-      hotClient: {
-        port: 34341,
-        host: '0.0.0.0',
-        // ...
-      },
-      // ...
-    };
-    module.exports = config;
-
-.. note::
-    * Configure a port for the hotClient that no other app will use
-    * Same host configuration as the dev server itself
-    * More configuration exists, such as historyApiFallback; source code is
-      online
-
-----
-
-:id: nginx-hot
-
-NGINX Config for Hot reload
-===========================
-
-|nginx_logo|
-
-.. code:: nginx
-
-    server {
-      listen 34341;
-
-      # Necessary configurations for the websocket server
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "Upgrade";
-
-      location / {
-        set $target "http://localhost:34341";
-        proxy_pass $target;
-      }
-    }
-
-.. note::
-    * Some additional HTTP headers are needed
-    * One annoying thing we need to do is ensure that the port lines up with
-      the hotClient port
-    * Again don't get too bogged in remembering these details, since the source
-      code is online
-
-----
-
-:id: package-json
-
-Wait a second...
-================
-
-.. note::
-    * So I kind of just threw a lot at you...
-    * This development environment is a bit complicated!
-    * And let's think back to my node version conflict issues from the start.
-    * We've just introduced a system dependency
-    * A complicated one, at that
-    * Setting up NGINX might throw people for a bit of a snag
-    * And a different version of it might break up my set up
-    * So I swear this next part is relevant, but I want to talk about
-      package.json for a minute
-
-----
-
-:id: npm-install-bad-1
-
-NPM Install
-===========
-
-.. code:: bash
-
-    npm install <package-name>
-
-.. note::
-    * I'm developing a javascript app
-    * Someone wants to install a package locally, so they type the following
-      command
-    * How do I feel?
-
-----
-
-:id: npm-install-bad-2
-
-NPM Install
-===========
-
-.. code:: bash
-
-    npm install <package-name>
-
-|sad_man|
-
-.. note::
-    * When someone runs that command, this is how I feel
-    * What's missing here?
-
-
-----
-
-:id: npm-install-better
-
-NPM Install
-===========
-
-.. code:: bash
-
-    npm install --save <dependency>
-    npm install --save-dev <dev-dependency>
-
-.. note::
-    * We need to make sure the dependencies get added to package.json
-    * Obvious, right? Without taking this step, we can't share our code with
-      anyone else without an annoying README that might get out of date.
-    * Yarn is a nice alternative that writes to package.json by default
-    * package.json doesn't solve for node and npm versions -- you'll have to
-      mention this in a README
-    * What if we need a database?
-    * What if we want to run our apps through a reverse proxy on development?
-
-----
-
-:id: docker
-
-|docker_logo|
-
-.. code:: Dockerfile
-
-    # node has a pre-configured docker environment based on
-    # node version
-
-    FROM node:10.9.0-alpine as base
-
-    # ...
-
-    # Use system package manager to install yarn
-
-    RUN apk add --no-cache yarn
-
-    # ...
-
-    RUN yarn install
-
-    # ...
-
-.. note::
-    * In order to mitigate system dependency issues, I recommend using a
-      system abstraction layer, such as Docker
-    * Here, node has some pre-configured docker containers that can meet
-      people's needs well
-    * Plenty of people use docker containers in their production environment,
-      but it's equally useful in development
-    * Not the only solution
-    * Could use a VM or something like kubernetes with minikube
-    * Docker to me is the simplest
-
-----
-
 :id: tying-it-together
 
 Tying it all together: docker-compose
@@ -730,44 +653,6 @@ Updating NGINX
 
 .. note::
     * We can leverage docker's internal networking capabilities
-
-----
-
-:id: updating-nginx-2
-
-Updating NGINX
-==============
-
-.. code:: nginx
-
-  http {
-    # ...
-    server {
-    # ...
-      location / {
-        # previously 'set $target "http://localhost:34341";
-        set $target "http://app:34341";
-        proxy_pass $target;
-      }
-    }
-
-    server {
-      # ...
-      location /api {
-        set $target "http://api:5000";
-        proxy_pass $target;
-      }
-
-      location /app {
-        set $target "http://app:8080";
-        proxy_pass $target;
-      }
-    }
-  }
-
-.. note::
-    * So we just need to change localhost to the relevant container DNS
-
 
 ----
 
@@ -861,6 +746,10 @@ Thank You
 .. |app_cors| image:: images/app_cors.png
     :height: 500px
 
+.. |works_on_my_machine| image:: downloads/images/works_on_my_machine.jpg
+    :height: 500px
+
+
 .. https://pixabay.com/en/lonely-man-crying-alone-male-1510265/
 .. |sad_man| image:: images/sad_man.jpg
     :height: 250px
@@ -882,3 +771,12 @@ Thank You
 
 .. |reverse_proxy_diagram| image:: compiled/reverse_proxy.svg
     :height: 300px
+
+.. |docker_workflow| image:: compiled/docker_workflow.svg
+    :height: 500px
+
+.. |readme_workflow| image:: compiled/readme_workflow.svg
+    :height: 500px
+
+.. |proxy_component| image:: compiled/proxy_component.svg
+    :height: 400px

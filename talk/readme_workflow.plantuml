@@ -1,0 +1,46 @@
+@startuml
+
+left to right direction
+
+skinparam backgroundColor lightGray
+
+actor :Core Developer: as dev1
+
+rectangle "Core Developer Machine" {
+  usecase (Database Dependency) as db1
+  usecase (API Environment Dependency) as aed1
+  usecase (Frontend Environment Dependency) as fed1
+  usecase (Additional Dependencies) as ad1
+}
+
+
+actor :New Developer: as dev2
+rectangle "New Developer Developer Machine" {
+  usecase (Database Dependency) as db2
+  usecase (API Environment Dependency) as aed2
+  usecase (Frontend Environment Dependency) as fed2
+  usecase (Additional Dependencies) as ad2
+}
+
+rectangle Repo {
+  usecase (README) as readme
+  usecase (App Code) as appcode
+}
+
+
+dev1 -down-> db1
+dev1 -down-> aed1
+dev1 -down-> fed1
+dev1 -down-> ad1
+dev1 -down-> appcode : leverages dependency change
+dev1 -down-> readme : documents readme
+
+note right of readme : hopefully this is up to date?
+
+readme -up-> dev2 : check readme for system dependencies
+dev2 -up-> db2
+dev2 -up-> aed2
+dev2 -up-> fed2
+dev2 -up-> ad2
+
+@enduml

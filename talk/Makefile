@@ -1,12 +1,16 @@
 .PHONY: present
 present: \
 	compiled/reverse_proxy.svg \
+	compiled/readme_workflow.svg \
+	compiled/docker_workflow.svg \
+	compiled/proxy_component.svg \
+	downloads/images/works_on_my_machine.jpg \
 	downloads/images/compose_logo.png \
 	downloads/images/nginx_logo.svg \
 	downloads/images/react_logo.svg \
 	downloads/images/webpack_logo.svg \
 	| downloads/fonts/orkney downloads/images/dockerlogos
-	hovercraft talk.rst
+	hovercraft -p 0.0.0.0:8000 talk.rst
 
 compiled/%.svg: %.plantuml | compiled
 	java -jar ~/java/plantuml.jar -tsvg -o compiled $<
@@ -16,11 +20,15 @@ compiled:
 
 downloads/fonts/orkney: downloads/orkney.zip | downloads/fonts
 	mkdir -p downloads/fonts/orkney && \
-		unzip -d downloads/fonts/orkney downloads/orkney.zip
+	unzip -d downloads/fonts/orkney downloads/orkney.zip
 
 downloads/orkney.zip: | downloads
 	curl -o downloads/orkney.zip \
 	https://fontlibrary.org/assets/downloads/orkney/99f93483b92aaa9f10d3780aba2997e7/orkney.zip
+
+downloads/images/works_on_my_machine.jpg: | downloads/images
+	curl -L -o downloads/images/works_on_my_machine.jpg \
+	https://i1.wp.com/www.developermemes.com/wp-content/uploads/2013/12/Defect-In-Production-Works-On-My-Machine.jpg?w=400
 
 downloads/images/compose_logo.png: | downloads/images
 	curl -L -o downloads/images/compose_logo.png \
@@ -40,7 +48,7 @@ downloads/images/nginx_logo.svg: | downloads/images
 
 downloads/images/dockerlogos: downloads/dockerlogos.zip | downloads/images
 	mkdir -p downloads/images/dockerlogos && \
-		unzip -d downloads/images/dockerlogos downloads/dockerlogos.zip
+	unzip -d downloads/images/dockerlogos downloads/dockerlogos.zip
 
 downloads/dockerlogos.zip: | downloads
 	curl -o downloads/dockerlogos.zip \

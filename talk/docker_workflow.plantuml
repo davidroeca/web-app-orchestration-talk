@@ -1,0 +1,41 @@
+@startuml
+
+top to bottom direction
+
+skinparam backgroundColor lightGray
+
+actor :Core Developer: as dev1
+rectangle "Core Developer Machine" {
+  usecase (Core Developer's Docker) as docker1
+}
+
+usecase (Docker Build) as build1
+
+
+actor :New Developer: as dev2
+rectangle "New Developer Machine" {
+  usecase (New Developer's Docker) as docker2
+}
+
+usecase (Docker Build) as build2
+
+rectangle Repo {
+  usecase (Dockerfile) as dockerfile
+  usecase (App Code) as appcode
+}
+
+
+dev1 --> dockerfile : updates dockerfile
+dev1 --> appcode : leverages dependency change
+dev1 --> build1
+appcode --> build1
+dockerfile --> build1
+build1 --> docker1 : build/rebuild docker container
+
+
+dev2 --> build2
+appcode --> build2
+dockerfile --> build2
+build2 --> docker2 : build docker container
+
+@enduml
