@@ -91,6 +91,18 @@ Did you even check the README?
 
 |no_idea|
 
+.. code:: javascript
+
+    if (env === 'production') {
+      // do some production stuff
+    } else if (env === 'staging') {
+      // do some staging stuff
+
+    } else if (env === 'development') {
+      // do some dev stuff
+      // maybe handle CORS?
+    }
+
 .. note::
     * The more people we onboarded, the more we realized that this approach
       simply does not scale to the number of possible environments,
@@ -121,8 +133,6 @@ Development Environment as Code
       staging environment of sorts (how many people here have had to deploy
       code to debug something) - this solution can help get around some of
       these issues
-    * This is typically achieved by moving the setup out of the readme and into
-      configuration files
     * By the end of this talk, I hope you'll be able to start thinking
       about ways of updating your own development environment setup
 
@@ -153,7 +163,7 @@ React
     * I'm writing a web app in React
     * She's working on a web api in Node and Express
     * I clone her code
-    * I go through her README and install Node 8 and the necessary database
+    * I go through her README and install NodeJS and the necessary database
       requirements on my system
 
 ----
@@ -233,6 +243,7 @@ API
 .. note::
     * And it works as expected!
     * Now I could just move on and write my learnings down in a README...
+    * No. Let me show you why I won't recommend that.
 
 ----
 
@@ -246,43 +257,54 @@ README Workflow
 .. note::
     * So let's see what all of us will be interacting with the README
     * Looks like a lot of manual steps!
-    * There's a better way of doing things that I'll show you, but let's
-      ground the discussion with a mention of package.json
+    * So I want you to keep this diagram in mind as I show you the next one
 
 ----
 
-:id: npm-install-bad-1
+:id: docker-workflow
 
-NPM Install
-===========
+Docker Workflow
+===============
+
+|docker_workflow|
+
+.. note::
+    * I propose an alternative workflow.
+    * Use something like Docker
+    * Could also use something like a VM
+    * With docker, people can maintain one file to pin down system dependencies
+      and which holds the logic for spinning up a development environment
+    * If the dockerfile gets out of date, the development environment breaks
+    * Incentive to keep everything up to date; it's code
+    * A new developer runs one command and is ready to go
+
+----
+
+:id: npm-install
+
+Analogy:
+========
+
+Node.JS + Package.json
+----------------------
 
 .. code:: bash
 
+    # Like not using docker
     npm install <package-name>
 
-.. note::
-    * I'd say that the diagram I just showed you is kind of like the
-      system-dependency parallel of running this command, and then writing
-      about the javascript libraries in a README file
-    * Someone installed a package, but it wasn't written to package.json
-    * The main issue here is a missing flag
-
-----
-
-:id: npm-install-better
-
-NPM Install
-===========
-
-.. code:: bash
-
+    # Like using docker
     npm install --save <dependency>
     npm install --save-dev <dev-dependency>
+    yarn <anything>
 
 .. note::
-    * Shout out to yarn, for implementing the --save flag by default
-    * It seems obvious that we write these dependencies to a config file.
-    * So why should it be ok to write our system dependencies in the README?
+    * Why use docker? Let's use an analogy
+    * The top command doesn't keep track of dependencies in package.json
+    * The bottom three do
+    * Shout out to yarn
+    * The main issue here is obviously much simpler; we're just missing a flag
+    * But it's a good analogy
 
 ----
 
@@ -310,28 +332,13 @@ NPM Install
     # ...
 
 .. note::
-    * One solution to this is something like Docker, a slightly more procedural
-      package.json for system dependencies
-    * Note: not the only solution
-    * Could use a VM or something like kubernetes with minikube; the goal here
-      is to have some lightweight abstraction that can be reliably replicated
-      across systems
-    * Docker to me is the simplest, which is part of why I chose it here
-
-----
-
-:id: docker-workflow
-
-Docker Workflow
-===============
-
-|docker_workflow|
-
-.. note::
-    * This is the modified diagram of the new workflow
-    * Now, people can maintain the dockerfile, which is *code* rather than
-      documentation used to spin up the development environment
-    * A new developer runs one command and is ready to go.
+    * So let's look at a dockerfile
+    * One thing to note is that maintainers of large programming environments
+      such as NodeJS and database systems such as MongoDB and Postgresql
+      maintain base docker images that make our lives much easier.
+    * Like a more procedural package.json for system dependencies
+    * And what was the problem we were solving with this dockerfile?
+    * Right the API.
     * So we placed this API in captivity, and everyone is running Node 10 in
       docker. Now it's time to run the javascript app
 
@@ -343,6 +350,8 @@ App Code
 ========
 
 .. code:: javascript
+
+    // This app to be dockerized soon
 
     class App extends React.Component {
 
@@ -580,12 +589,9 @@ docker-compose
 .. note::
     * Docker-compose can reference a number of these Dockerfiles and link
       them together in a unified way
-    * It supports networking configuration to expose ports between different
-      docker containers
+    * It supports networking configuration between containers
     * Also installs nginx
     * Handles database installation and management
-    * In theory if you have two back-ends that rely on two versions of a specific
-      database system
 
 
 ----
@@ -615,12 +621,10 @@ Compose file
         # ...
 
 .. note::
-    * One file that defines how services interact
-    * Think of it like package.json for your system dependencies
-    * In addition to setting up the reverse proxy, you can also set up database
-      dependencies locally, which can run as separate containers.
-    * Similar to NGINX and the Node docker images, most popular database system
-      developeres maintain their own respective docker images for public use
+    * One file that defines how your docker containers interact
+    * Third party containers can be downloaded and utilized in this file to
+      avoid introducing dependencies outside of the docker environment
+    * E.g. database, nginx
 
 ----
 
@@ -636,7 +640,7 @@ How to Run
 
 
 .. note::
-    * Once we've set up docker-compose, thiss is all we need to run
+    * Once we've set up docker-compose, this is all we need to run
 
 
 ----
