@@ -6,6 +6,7 @@ services:
     ports:
       - "80:80"
       - "34341:34341"
+      - "5001:5001"
     networks:
       - webapps
     volumes:
@@ -33,6 +34,19 @@ services:
     volumes:
       - ./app2:/home/node/app
       - /home/node/app/node_modules/
+  app3:
+    restart: always
+    build:
+      context: ./app3
+      target: development
+    networks:
+      - webapps
+    volumes:
+      - ./app3:/home/node/app
+      - /home/node/app/node_modules/
+    depends_on:
+      - nginx
+      - api
   api:
     restart: always
     build:

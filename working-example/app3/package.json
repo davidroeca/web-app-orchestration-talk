@@ -1,0 +1,30 @@
+{
+  "name": "webpack-stuff",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.26.1",
+    "webpack-dev-middleware": "^3.4.0",
+    "webpack-nano": "^0.3.0",
+    "webpack-plugin-serve": "^0.1.2"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-hot-loader": "^4.3.12"
+  },
+  "scripts": {
+    "start": "wp --config webpackPluginServe.config.js"
+  }
+}
